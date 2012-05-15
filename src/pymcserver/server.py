@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import utils
