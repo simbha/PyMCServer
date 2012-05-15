@@ -4,10 +4,7 @@ hash python2 2>/dev/null || {
 }
 
 DIR="$(dirname "$0")"
-
 cd "$DIR"
-[ -e data ] || mkdir data >/dev/null
-cd data
 
-export PYTHONPATH="$PYTHONPATH:../src"
-python2 ../src/pymcserver/main.py
+export PYTHONPATH="$PYTHONPATH:src"
+python2 src/pymcserver/main.py
