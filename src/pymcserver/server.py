@@ -5,6 +5,7 @@ from pymcserver import utils
 import logging
 import os
 import threading
+import readline
 
 server = None
 log = logging.getLogger("PyMCServer")
