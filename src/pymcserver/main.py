@@ -23,6 +23,8 @@ def mkdir(path):
         os.makedirs(__datadir)
 
 def initServer():
+    mkdir(__datadir)
+    
     # Setup logging
     sh = logging.StreamHandler()
     sh.setLevel(logging.DEBUG)
