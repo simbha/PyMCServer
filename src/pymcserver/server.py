@@ -14,6 +14,7 @@ datadir = "data"
 active = True
 
 _allCommands = {}
+_preHandleHooks = {}
 
 class WebServer:
     def __init__(self, host, port):
@@ -28,7 +29,6 @@ class WebServer:
     def stop(self):
         self.httpd.socket.close()
         
-
 class MCHTTPRequestHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         accesslog.info(fmt % args)
