@@ -86,6 +86,7 @@ def initServer():
     log.setLevel(logging.DEBUG)
     log.addHandler(sh)
     log.addHandler(fh)
+    log.info("Starting PyMCServer, " + version)
     log.info("W** SUCKS")
     
     # Setup web access.log
