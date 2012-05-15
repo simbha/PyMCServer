@@ -2,7 +2,7 @@
 
 import sys
 
-if sys.version_info.major != 2:
+if sys.version_info[0] != 2:
     print("PyMCServer requires Python 2.x to run.")
     exit(1)
 

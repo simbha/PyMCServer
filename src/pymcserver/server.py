@@ -11,6 +11,10 @@ log = logging.getLogger("PyMCServer")
 accesslog = logging.getLogger("WebAccess")
 datadir = "data"
 active = True
+version = "git"
+
+if version == "git": version += " version"
+else: version = "version " + version
 
 _allCommands = {}
 
