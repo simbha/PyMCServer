@@ -29,6 +29,7 @@ pip-log.txt
 # Eclipse
 .pydevproject
 .project
+.settings
 
 # PyMCServer
 /data

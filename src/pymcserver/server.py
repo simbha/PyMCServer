@@ -1,3 +1,5 @@
+# -*- coding: latin-1 -*-
+
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import utils
 import logging
@@ -10,7 +12,7 @@ accesslog = logging.getLogger("WebAccess")
 datadir = "data"
 active = True
 
-__allCommands = {}
+_allCommands = {}
 
 class WebServer:
     def __init__(self, host, port):
@@ -38,12 +40,32 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
 class ConsoleHandlerThread(threading.Thread):
     def run(self):
         while True:
-            print raw_input("> ")
+            line = raw_input("> ")
+            if line:
+                com = line.split()[0]
+                if _allCommands.has_key(com):
+                    args = line.split()[1:]
+                    _allCommands[com](args)
+                elif com == "help":
+                    log.info("Command list: ")
+                    for i in _allCommands.keys():
+                        log.info("- %s" % i)
+                else:
+                    log.error("Unknown command. Type 'help' for command list")
 
 def registerCommand(name, function):
-    __allCommands[name] = function
+    _allCommands[name] = function
     
 def testCommand(args):
+    print """
+§§§§§__§§__§§§____§§___§§§§___­­­­­­­­­­­___§§______§§§§﻿ ﻿
+§§__§§_§§__§§_§§__§§__§§___§§_­­­­­­­­­­­__§§§§___§§§__§§
+§§__§§_§§__§§_§§__§§_§§_______­­­­­­­­­­­__§§§§___§§
+§§§§§__§§__§§__§§_§§_§§___§§§_­­­­­­­­­­­_§§__§§____§§§
+§§_____§§__§§__§§_§§_§§____§§_­­­­­­­­­­­_§§§§§§______§§
+§§_____§§__§§__§§_§§__§§__§§§_­­­­­­­­­­­§§____§§_§§§__§§
+§§_____§§__§§___§§§§____§§§§__­­­­­­­­­­­§§____§§___§§§§﻿
+""".strip()
     print " | ".join(args)
 
 def initServer():
@@ -53,13 +75,14 @@ def initServer():
     # Setup console/file logging
     sh = logging.StreamHandler()
     sh.setLevel(logging.DEBUG)
-    sh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] - %(message)s"))
+    sh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
     fh = logging.FileHandler(os.path.join(datadir, "webserver.log"))
     fh.setLevel(logging.DEBUG)
-    fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] - %(message)s"))
+    fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
     log.setLevel(logging.DEBUG)
     log.addHandler(sh)
     log.addHandler(fh)
+    log.info("W** SUCKS")
     
     # Setup web access.log
     fh = logging.FileHandler(os.path.join(datadir, "access.log"))
@@ -67,7 +90,9 @@ def initServer():
     fh.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
     accesslog.addHandler(fh)
     
-    log.info("W** SUCKS")
+    # Set up commands
+    registerCommand("test", testCommand)
+    registerCommand("pingas", testCommand)
     
     server = WebServer("127.0.0.1", 8099)
     ConsoleHandlerThread().start()
