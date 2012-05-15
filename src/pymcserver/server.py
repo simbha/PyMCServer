@@ -11,10 +11,6 @@ log = logging.getLogger("PyMCServer")
 accesslog = logging.getLogger("WebAccess")
 datadir = "data"
 active = True
-version = "git"
-
-if version == "git": version += " version"
-else: version = "version " + version
 
 _allCommands = {}
 
@@ -62,13 +58,13 @@ def registerCommand(name, function):
     
 def testCommand(args):
     print """
-§§§§§__§§__§§§____§§___§§§§___­­­­­­­­­­­___§§______§§§§﻿ ﻿
-§§__§§_§§__§§_§§__§§__§§___§§_­­­­­­­­­­­__§§§§___§§§__§§
-§§__§§_§§__§§_§§__§§_§§_______­­­­­­­­­­­__§§§§___§§
-§§§§§__§§__§§__§§_§§_§§___§§§_­­­­­­­­­­­_§§__§§____§§§
-§§_____§§__§§__§§_§§_§§____§§_­­­­­­­­­­­_§§§§§§______§§
-§§_____§§__§§__§§_§§__§§__§§§_­­­­­­­­­­­§§____§§_§§§__§§
-§§_____§§__§§___§§§§____§§§§__­­­­­­­­­­­§§____§§___§§§§﻿
+§§§§§__§§__§§§____§§___§§§§______§§______§§§§
+§§__§§_§§__§§_§§__§§__§§___§§___§§§§___§§§__§§
+§§__§§_§§__§§_§§__§§_§§_________§§§§___§§
+§§§§§__§§__§§__§§_§§_§§___§§§__§§__§§____§§§
+§§_____§§__§§__§§_§§_§§____§§__§§§§§§______§§
+§§_____§§__§§__§§_§§__§§__§§§_§§____§§_§§§__§§
+§§_____§§__§§___§§§§____§§§§__§§____§§___§§§§
 """.strip()
     print " | ".join(args)
 
@@ -86,7 +82,7 @@ def initServer():
     log.setLevel(logging.DEBUG)
     log.addHandler(sh)
     log.addHandler(fh)
-    log.info("Starting PyMCServer, " + version)
+    log.info("Starting PyMCServer, " + utils.getVersion())
     log.info("W** SUCKS")
     
     # Setup web access.log
