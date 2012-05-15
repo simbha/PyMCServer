@@ -2,11 +2,15 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import utils
 import logging
 import os
+import threading
 
 server = None
 log = logging.getLogger("PyMCServer")
 accesslog = logging.getLogger("WebAccess")
 datadir = "data"
+active = True
+
+__allCommands = {}
 
 class WebServer:
     def __init__(self, host, port):
@@ -30,6 +34,17 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_response(200);
         self.end_headers();
         self.wfile.write("the w** sucks");
+
+class ConsoleHandlerThread(threading.Thread):
+    def run(self):
+        while True:
+            print raw_input("> ")
+
+def registerCommand(name, function):
+    __allCommands[name] = function
+    
+def testCommand(args):
+    print " | ".join(args)
 
 def initServer():
     global log, accesslog, server
@@ -55,6 +70,7 @@ def initServer():
     log.info("W** SUCKS")
     
     server = WebServer("127.0.0.1", 8099)
+    ConsoleHandlerThread().start()
     
     try:
         server.run()
