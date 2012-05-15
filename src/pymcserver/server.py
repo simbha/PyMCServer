@@ -9,6 +9,10 @@ log = logging.getLogger("PyMCServer")
 accesslog = logging.getLogger("WebAccess")
 datadir = "data"
 active = True
+version = "git"
+
+if version == "git": version += " version"
+else: version = "version " + version
 
 __allCommands = {}
 
@@ -67,6 +71,7 @@ def initServer():
     fh.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
     accesslog.addHandler(fh)
     
+    log.info("Starting PyMCServer, " + version)
     log.info("W** SUCKS")
     
     server = WebServer("127.0.0.1", 8099)
