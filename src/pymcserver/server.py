@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import utils
+from pymcserver import cmds
 import logging
 import os
 import threading
@@ -56,18 +55,6 @@ class ConsoleHandlerThread(threading.Thread):
 
 def registerCommand(name, function):
     _allCommands[name] = function
-    
-def testCommand(args):
-    print """
-§§§§§__§§__§§§____§§___§§§§______§§______§§§§
-§§__§§_§§__§§_§§__§§__§§___§§___§§§§___§§§__§§
-§§__§§_§§__§§_§§__§§_§§_________§§§§___§§
-§§§§§__§§__§§__§§_§§_§§___§§§__§§__§§____§§§
-§§_____§§__§§__§§_§§_§§____§§__§§§§§§______§§
-§§_____§§__§§__§§_§§__§§__§§§_§§____§§_§§§__§§
-§§_____§§__§§___§§§§____§§§§__§§____§§___§§§§
-""".strip()
-    print " | ".join(args)
 
 def initServer():
     global log, accesslog, server
@@ -90,11 +77,12 @@ def initServer():
     fh = logging.FileHandler(os.path.join(datadir, "access.log"))
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+    accesslog.setLevel(logging.DEBUG)
     accesslog.addHandler(fh)
     
     # Set up commands
-    registerCommand("test", testCommand)
-    registerCommand("pingas", testCommand)
+    registerCommand("test", cmds.testCommand)
+    registerCommand("pingas", cmds.testCommand)
     
     server = WebServer("127.0.0.1", 8099)
     ConsoleHandlerThread().start()
