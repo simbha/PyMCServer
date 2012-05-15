@@ -105,4 +105,3 @@ def initServer():
         server.run()
     except KeyboardInterrupt:
         server.stop()
-    
