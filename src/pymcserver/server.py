@@ -1,10 +1,11 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from pymcserver import utils
-from pymcserver import cmds
+from pymcserver import cmds, utils, hooks
+import Cookie
 import logging
 import os
-import threading
 import readline
+import threading
+import traceback
 
 server = None
 log = logging.getLogger("PyMCServer")
@@ -13,12 +14,13 @@ datadir = "data"
 active = True
 
 _allCommands = {}
-_preHandleHooks = {}
 
 class WebServer:
-    def __init__(self, host, port):
+    def __init__(self, host, port):        # That, is HORRIBLE. You can't pass objects to HTTPServer,
+        # you have to use a class!
         self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
-    
+        self.preHandleHooks = []        self.allSessions = {}    
+    def registerPreHook(self, function):        self.preHandleHooks.append(function)    
     def run(self):
         self.httpd.serve_forever()
     
@@ -28,14 +30,48 @@ class WebServer:
     def stop(self):
         self.httpd.socket.close()
         
-class MCHTTPRequestHandler(BaseHTTPRequestHandler):
-    def log_message(self, fmt, *args):
+class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fmt, *args):
         accesslog.info(fmt % args)
 
     def do_GET(self):
-        self.send_response(200);
-        self.end_headers();
-        self.wfile.write("the w** sucks");
+        res = Response()
+        
+        for hook in server.preHandleHooks:
+            hook(self, res)
+        
+        self.send_response(res.code)
+        for key, value in res.headers:
+            self.send_header(key, value)
+    
+    def getSession(self):        if "Cookie" in self.headers:
+            c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:                return c["session"].value            else:                pass
+        else:            pass
+    
+    def getServer(self):
+        global server
+        return server
+
+class Response:
+    def __init__(self, handler):
+        self.code = 500
+        self.headers = {}
+        self.handler = handler
+        
+        self.headers["Content-Type"] = "text/html"
+        
+        self.__endheaders = False
+        self.__headersStack = []
+    
+    def endHeaders(self):
+        self.handler.end_headers()
+        #self.__headersStack = traceback.format_stack()
+        self.__endheaders = True
+    
+    def getWFile(self):
+        return self.handler.wfile
+    
+    def getRFile(self):
+        return self.handler.rfile
 
 class ConsoleHandlerThread(threading.Thread):
     def run(self):
@@ -84,7 +120,9 @@ def initServer():
     registerCommand("test", cmds.testCommand)
     registerCommand("pingas", cmds.testCommand)
     
-    server = WebServer("127.0.0.1", 8099)
+    server = WebServer("127.0.0.1", 8099)        server.registerPreHook(hooks.loginCheckHook)
+    server.registerPreHook(hooks.cookieHook)
+    
     ConsoleHandlerThread().start()
     
     try:
