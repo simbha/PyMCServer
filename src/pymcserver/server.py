@@ -1,11 +1,12 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import cmds, utils, hooks
+from pymcserver.utils import Session
 import Cookie
 import logging
 import os
 import readline
 import threading
-import traceback
+import uuid
 
 server = None
 log = logging.getLogger("PyMCServer")
@@ -16,11 +17,8 @@ active = True
 _allCommands = {}
 
 class WebServer:
-    def __init__(self, host, port):        # That, is HORRIBLE. You can't pass objects to HTTPServer,
-        # you have to use a class!
-        self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
-        self.preHandleHooks = []        self.allSessions = {}    
-    def registerPreHook(self, function):        self.preHandleHooks.append(function)    
+    def __init__(self, host, port):        self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
+        self.pageHandlers = []        self.allSessions = {}    
     def run(self):
         self.httpd.serve_forever()
     
@@ -34,14 +32,27 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         accesslog.info(fmt % args)
 
     def do_GET(self):
-        res = Response()
+        res = Response(self)
         
-        for hook in server.preHandleHooks:
-            hook(self, res)
-        
+        if not ("Cookie" in self.headers):
+            cookie = Cookie.SimpleCookie()
+            
+            sessid = uuid.uuid4()
+            server.allSessions[sessid] = Session()
+            
+            cookie["session"] = sessid
+            cookie["session"]["Path"] = "/"
+            
+            res.headers["Set-Cookie"] = cookie.output(header="")
+            
         self.send_response(res.code)
-        for key, value in res.headers:
+        
+        for key, value in res.headers.iteritems():
             self.send_header(key, value)
+        
+        self.end_headers()
+        
+        self.wfile.write("EEEEEEEEe1")
     
     def getSession(self):        if "Cookie" in self.headers:
             c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:                return c["session"].value            else:                pass
@@ -72,6 +83,9 @@ class Response:
     
     def getRFile(self):
         return self.handler.rfile
+    
+    def cancelResponse(self):
+        self.__canceled = True
 
 class ConsoleHandlerThread(threading.Thread):
     def run(self):
@@ -120,10 +134,7 @@ def initServer():
     registerCommand("test", cmds.testCommand)
     registerCommand("pingas", cmds.testCommand)
     
-    server = WebServer("127.0.0.1", 8099)        server.registerPreHook(hooks.loginCheckHook)
-    server.registerPreHook(hooks.cookieHook)
-    
-    ConsoleHandlerThread().start()
+    server = WebServer("127.0.0.1", 8099)        ConsoleHandlerThread().start()
     
     try:
         server.run()
