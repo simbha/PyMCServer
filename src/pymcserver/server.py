@@ -47,10 +47,21 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         
         path = str(self.path)
         mod = path.split("/")[1]
+        relpath = "/" + "/".join(path.split("/")[2:])
+        handled = False
+        
         if mod in server.pageHandlers:
-            pass
+            # Pass request to page handler
+            server.pageHandlers[mod].handlePage(self, res, relpath)
+            handled = True
         else:
-            self.send_response(404)
+            res.code = 404
+            handled = False
+        
+        if not handled:
+            self.send_error(res.code, "The w** sucks")
+            for key, value in res.headers.iteritems():
+                self.send_header(key, value)
         
     def getSession(self):        if "Cookie" in self.headers:
             c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:                return c["session"].value            else:                pass
