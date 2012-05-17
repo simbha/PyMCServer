@@ -4,3 +4,5 @@ def handlePage(handler, res, path):
     res.endHeaders()
     wfile = res.getWFile()
     wfile.write(handler.headers)
+    wfile.write("\n")
+    wfile.write(handler.getServer().allSessions)

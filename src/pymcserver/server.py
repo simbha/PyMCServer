@@ -5,6 +5,7 @@ import Cookie
 import logging
 import os
 import readline
+import sys
 import threading
 import uuid
 
@@ -34,10 +35,10 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
     def do_GET(self):
         res = Response(self)
         
-        if not ("Cookie" in self.headers):
+        if self.getSession() == None:
             cookie = Cookie.SimpleCookie()
             
-            sessid = uuid.uuid4()
+            sessid = str(uuid.uuid4())
             server.allSessions[sessid] = Session()
             
             cookie["session"] = sessid
@@ -64,8 +65,13 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
                 self.send_header(key, value)
         
     def getSession(self):        if "Cookie" in self.headers:
-            c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:                return c["session"].value            else:                pass
-        else:            pass
+            c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:
+                sessid = c["session"].value
+                if sessid in server.allSessions:
+                    return server.allSessions[sessid]
+                else:
+                    return None            else:                return None
+        else:            return None
     
     def getServer(self):
         global server
@@ -149,7 +155,8 @@ def initServer():
     
     server = WebServer("127.0.0.1", 8099)
     server.pageHandlers["cookies"] = pagecookie
-        ConsoleHandlerThread().start()
+    
+    if not "--noconsole" in sys.argv:        ConsoleHandlerThread().start()
     
     try:
         server.run()
