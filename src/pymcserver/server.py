@@ -1,5 +1,5 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from pymcserver import cmds, utils, hooks, pagecookie
+from pymcserver import cmds, utils, pagecookie, components, pageresource
 from pymcserver.utils import Session
 import Cookie
 import logging
@@ -7,6 +7,7 @@ import os
 import readline
 import sys
 import threading
+import time
 import uuid
 
 server = None
@@ -19,7 +20,8 @@ _allCommands = {}
 
 class WebServer:
     def __init__(self, host, port):        self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
-        self.pageHandlers = {}        self.allSessions = {}    
+        self.pageHandlers = {}        self.pageComponents = {}        self.allSessions = {}
+    
     def run(self):
         self.httpd.serve_forever()
     
@@ -35,6 +37,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
     def do_GET(self):
         res = Response(self)
         
+        # Create a session if cookie does not exist or is invalid
         if self.getSession() == None:
             cookie = Cookie.SimpleCookie()
             
@@ -45,11 +48,20 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
             cookie["session"]["Path"] = "/"
             
             res.headers["Set-Cookie"] = cookie.output(header="")
+        else:
+            # If session is valid, update the last visited time
+            self.getSession().time = time.time()
         
         path = str(self.path)
         mod = path.split("/")[1]
         relpath = "/" + "/".join(path.split("/")[2:])
         handled = False
+        
+        # Prevent exploits
+        if "/.." in path:
+            res.code = 403
+            self.sendErrorPage(res)
+            return
         
         if mod in server.pageHandlers:
             # Pass request to page handler
@@ -60,9 +72,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
             handled = False
         
         if not handled:
-            self.send_error(res.code, "The w** sucks")
-            for key, value in res.headers.iteritems():
-                self.send_header(key, value)
+            self.sendErrorPage(res)
         
     def getSession(self):        if "Cookie" in self.headers:
             c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:
@@ -76,6 +86,15 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
     def getServer(self):
         global server
         return server
+    
+    def sendErrorPage(self, res, message=None):
+        self.send_response(res.code)
+        for key, value in res.headers.iteritems():
+            self.send_header(key, value)
+        self.end_headers()
+        self.wfile.write(server.pageComponents["header"]())
+        self.wfile.write("<p>W** SUCKS!</p>\n")
+        self.wfile.write(server.pageComponents["footer"]())
 
 class Response:
     def __init__(self, handler):
@@ -149,12 +168,19 @@ def initServer():
     accesslog.setLevel(logging.DEBUG)
     accesslog.addHandler(fh)
     
-    # Set up commands
+    # Register commands
     registerCommand("test", cmds.testCommand)
     registerCommand("pingas", cmds.testCommand)
     
     server = WebServer("127.0.0.1", 8099)
+    
+    # Register page components
+    server.pageComponents["header"] = components.makeHeader
+    server.pageComponents["footer"] = components.makeFooter
+    
+    # Register page handlers
     server.pageHandlers["cookies"] = pagecookie
+    server.pageHandlers["res"] = pageresource
     
     if not "--noconsole" in sys.argv:        ConsoleHandlerThread().start()
     

@@ -5,4 +5,7 @@ def handlePage(handler, res, path):
     wfile = res.getWFile()
     wfile.write(handler.headers)
     wfile.write("\n")
-    wfile.write(handler.getServer().allSessions)
+    for key, value in handler.getServer().allSessions.iteritems():
+        wfile.write(key + ":\n")
+        for k, v in value.__dict__.iteritems():
+            wfile.write("    %s: %s\n" % (k, v))
