@@ -15,8 +15,8 @@ def getVersion():
     if not curversion:
         output = commands.getstatusoutput("git describe --tags")
         if output[0] == 0:
-            return output[1]
+            curversion = output[1]
         else:
-            return "UNKNOWNVERSION"
-    else:
-        return curversion
+            curversion = "UNKNOWNVERSION"
+    
+    return curversion
