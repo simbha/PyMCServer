@@ -45,8 +45,13 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
     def do_GET(self):
         res = Response(self)
         
+        sessid = None
+        if "Cookie" in self.headers:
+            c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:
+                sessid = c["session"].value
+                
         # Create a session if cookie does not exist or is invalid
-        if self.getSession() == None:
+        if self.getSession(sessid) == None:
             cookie = Cookie.SimpleCookie()
             
             sessid = str(uuid.uuid4())
@@ -58,7 +63,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
             res.headers["Set-Cookie"] = cookie.output(header="")
         else:
             # If session is valid, update the last visited time
-            self.getSession().time = time.time()
+            self.getSession(sessid).time = time.time()
         
         path = str(self.path)
         mod = path.split("/")[1]
@@ -69,6 +74,21 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         if "/.." in path:
             res.code = 403
             self.sendErrorPage(res)
+            return
+        
+        # Redirect / to /manage
+        if path == "/":
+            res.code = 301
+            res.headers["Location"] = "/manage"
+            res.endHeaders()
+            return
+        
+        # Send client to login page if not logged in.
+        session = self.getSession(sessid)
+        if not (path == "/" or mod == "res" or mod == "login" or mod == "cookies") and not session.user:
+            res.code = 301
+            res.headers["Location"] = "/login"
+            res.endHeaders()
             return
         
         if mod in server.pageHandlers:
@@ -82,14 +102,21 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         if not handled:
             self.sendErrorPage(res)
         
-    def getSession(self):        if "Cookie" in self.headers:
+    def getSession(self, sessid):        '''if "Cookie" in self.headers:
             c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:
                 sessid = c["session"].value
                 if sessid in server.allSessions:
                     return server.allSessions[sessid]
                 else:
                     return None            else:                return None
-        else:            return None
+        else:            return None'''
+        if sessid == None:
+            return None
+        
+        if sessid in server.allSessions:
+            return server.allSessions[sessid]
+        else:
+            return None
     
     def getServer(self):
         global server
