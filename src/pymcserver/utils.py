@@ -12,6 +12,8 @@ def mkdir(path):
         os.makedirs(path)
 
 def getVersion():
+    global curversion
+    
     if not curversion:
         output = commands.getstatusoutput("git describe --tags")
         if output[0] == 0:
