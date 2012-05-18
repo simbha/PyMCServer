@@ -1,18 +1,23 @@
-def makeHeader(extraHead=None):
+import pymcserver
+
+def makeHeader(extraHead=None, title=None):
     comp = """<!DOCTYPE html>
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="/res/style.css" />{0}
+<title>{1}</title>
 </head>
 <body>
+<div id="wrapper">
 """
+
+    ex = extraHead or ""
+    ti = "%s - PyMCServer" % pymcserver.server.server.hostname
     
-    if extraHead:
-        return comp.format(extraHead)
-    else:
-        return comp.format("")
+    return comp.format(ex, ti)
 
 def makeFooter():
-    return """</body>
+    return """</div>
+</body>
 </html>
 """

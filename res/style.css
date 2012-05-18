@@ -1,4 +1,46 @@
 body {
-	background-color: #333333;
+	background-color: #151515;
 	color: white;
+	font-family: helvetica, arial, sans;
+	font-size: 14px;
+}
+
+.centerBox {
+	background-color: #0D0D0D;
+	border: 1px solid #080808;
+	border-right: 1px solid #202020;
+	border-bottom: 1px solid #202020;
+	border-radius: 6px;
+	margin: 0 auto;
+	width: 360px;
+	padding: 0px 8px;
+	top: 196px;
+	position: relative;
+}
+
+.centerBox p {
+	margin-top: 2px;
+	font-size: 14px;
+}
+
+.centerBox h2 {
+	margin-bottom: 2px;
+	font-size: 1.8em;
+}
+
+p.small {
+	font-size: 12px;
+}
+
+a {
+	color: #516CD9;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #EEEEEE;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin-top: 0.35em;
 }

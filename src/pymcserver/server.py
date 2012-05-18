@@ -5,6 +5,7 @@ import Cookie
 import logging
 import os
 import readline
+import socket
 import sys
 import threading
 import time
@@ -18,9 +19,16 @@ active = True
 
 _allCommands = {}
 
+allErrors = {
+    403: ("Forbidden", "You have no access to go to that page."),
+    404: ("Not found", "The page does not exist."),
+    500: ("Server error", "Something went wrong. Check the PyMCServer logs.")
+}
+
 class WebServer:
     def __init__(self, host, port):        self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
         self.pageHandlers = {}        self.pageComponents = {}        self.allSessions = {}
+        self.hostname = socket.gethostname()
     
     def run(self):
         self.httpd.serve_forever()
@@ -92,8 +100,21 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         for key, value in res.headers.iteritems():
             self.send_header(key, value)
         self.end_headers()
+        
         self.wfile.write(server.pageComponents["header"]())
-        self.wfile.write("<p>W** SUCKS!</p>\n")
+        self.wfile.write("""<div class="centerTop"></div>
+<div class="centerBox">
+<h2>%s - %s</h2>
+<p>%s</p>
+<p><a href="/">Back to PyMCServer home</a></p>
+<p class="small" style="margin-top: 48px">PyMCServer version %s running on %s.</p>
+</div>
+<div class="centerBottom"></div>
+""" % (res.code,
+       allErrors.get(res.code, ("Unknown error"))[0],
+       allErrors.get(res.code, (None, "Unknown description"))[1],
+       utils.getVersion(),
+       server.hostname))
         self.wfile.write(server.pageComponents["footer"]())
 
 class Response:
