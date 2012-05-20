@@ -83,6 +83,13 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
             res.endHeaders()
             return
         
+        # Redirect /favicon.ico to /res/favicon.ico
+        if path == "/favicon.ico":
+            res.code = 301
+            res.headers["Location"] = "/res/favicon.ico"
+            res.endHeaders()
+            return
+        
         # Send client to login page if not logged in.
         session = self.getSession(sessid)
         if not (path == "/" or mod == "res" or mod == "login" or mod == "cookies") and not session.user:
