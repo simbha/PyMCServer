@@ -49,8 +49,16 @@ table {
 	width: 100%;
 }
 
-table input {
-	width: 100%;
+table td {
+	padding: 0px;
+}
+
+/* Bad hack to get inputs aligned right */
+table input[type="text"], table input[type="password"] {
+	width: 95%;
+}
+
+input[type="text"], input[type="password"] {
 	border: 1px solid #181818;
 	border-right: 1px solid #383838;
 	border-bottom: 1px solid #383838;

@@ -48,17 +48,20 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
 
     def do_GET(self):
         res = Response(self)
-        
         sessid = None
+        
         if "Cookie" in self.headers:
             c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:
                 sessid = c["session"].value
+                
+        self.cursessid = sessid
                 
         # Create a session if cookie does not exist or is invalid
         if self.getSession(sessid) == None:
             cookie = Cookie.SimpleCookie()
             
             sessid = str(uuid.uuid4())
+            self.cursessid = sessid
             server.allSessions[sessid] = Session()
             
             cookie["session"] = sessid
@@ -68,8 +71,6 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         else:
             # If session is valid, update the last visited time
             self.getSession(sessid).time = time.time()
-        
-        self.cursessid = sessid
         
         path = str(self.path)
         mod = path.split("/")[1]

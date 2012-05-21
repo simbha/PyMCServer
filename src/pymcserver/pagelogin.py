@@ -20,9 +20,12 @@ def handlePage(handler, res, path):
 <tr>
 <td>Password:</td><td><input type="password" name="password"></td>
 </tr>
+<tr>
+<td></td><td style="text-align: right"><input type="submit"></input></td>
 </table>
+</form>
 <p class="small" style="margin-top: 48px">PyMCServer version {0} running on {1}.</p>
-</form>""".format(handler.getServer().hostname, utils.getVersion()))
+""".format(handler.getServer().hostname, utils.getVersion()))
             handler.wfile.write(handler.getServer().pageComponents["footer"]())
     elif path == "/action":
         if handler.command == "POST":
