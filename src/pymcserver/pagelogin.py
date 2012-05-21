@@ -1,4 +1,25 @@
 from pymcserver import utils
+import hashlib
+import os
+import pymcserver
+import urlparse
+
+def isAuthorized(user, pasw):
+    with open(os.path.join(pymcserver.server.datadir, "config", "users.txt")) as f:
+        for line in f:
+            spl = line.split(":")
+            name = spl[0] # there's a prequel to SPL1? oh no!
+            passhash = spl[1].rstrip()
+            
+            if user == name:
+                md5 = hashlib.md5()
+                md5.update(pasw)
+                if passhash == md5.hexdigest():
+                    return True
+                else:
+                    return False
+    return False
+
 def handlePage(handler, res, path):
     if path == "/":
         # If user is logged in, then redirect to /
@@ -33,7 +54,19 @@ def handlePage(handler, res, path):
             res.headers["Content-Type"] = "text/plain"
             res.endHeaders()
             read = handler.rfile.read(int(handler.headers["Content-Length"]))
-            handler.rfile.write(read)
+            handler.wfile.write(read + "\n")
+            handler.wfile.write(str(urlparse.parse_qs(read)) + "\n\n")
+            
+            parse = urlparse.parse_qs(read)
+            
+            u = parse["username"][0]
+            p = parse["password"][0]
+            
+            if isAuthorized(u, p):
+                handler.wfile.write("Authorized\n")
+            else:
+                handler.wfile.write("Not authorized\n")
+            
         else:
             res.code = 405
             handler.sendErrorPage(res)

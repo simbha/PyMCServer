@@ -245,8 +245,9 @@ def initServer():
     log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
     
     try:
-        import readline
-        readline.clear_history()
+        if not "--noreadline" in sys.argv:
+            import readline
+            readline.clear_history()
     except ImportError:
         log.warn("Could not import the readline module.")
     
