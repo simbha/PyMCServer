@@ -5,7 +5,6 @@ from pymcserver.utils import Session
 import Cookie
 import logging
 import os
-import readline
 import socket
 import sys
 import threading
@@ -244,6 +243,12 @@ def initServer():
     log.addHandler(fh)
     log.info("Starting PyMCServer, " + utils.getVersion())
     log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
+    
+    try:
+        import readline
+        readline.clear_history()
+    except ImportError:
+        log.warn("Could not import the readline module.")
     
     # Setup web access.log
     fh = logging.FileHandler(os.path.join(datadir, "access.log"))
