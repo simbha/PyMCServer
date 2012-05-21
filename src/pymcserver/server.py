@@ -47,6 +47,12 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         accesslog.info(fmt % args)
 
     def do_GET(self):
+        self.handlePage()
+        
+    def do_POST(self):
+        self.handlePage()
+    
+    def handlePage(self):
         res = Response(self)
         sessid = None
         

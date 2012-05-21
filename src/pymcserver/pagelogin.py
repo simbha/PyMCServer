@@ -12,7 +12,7 @@ def handlePage(handler, res, path):
             handler.wfile.write(handler.getServer().pageComponents["header"]())
             handler.wfile.write("""<div class="centerBox">
 <h2>Log in to PyMCServer</h2>
-<form action="action" method="post">
+<form action="/login/action" method="post">
 <table>
 <tr>
 <td width="50%">Username:</td><td width="50%"><input type="text" name="username"></td>
@@ -29,7 +29,11 @@ def handlePage(handler, res, path):
             handler.wfile.write(handler.getServer().pageComponents["footer"]())
     elif path == "/action":
         if handler.command == "POST":
-            pass
+            res.code = 200
+            res.headers["Content-Type"] = "text/plain"
+            res.endHeaders()
+            read = handler.rfile.read(int(handler.headers["Content-Length"]))
+            handler.rfile.write(read)
         else:
             res.code = 405
             handler.sendErrorPage(res)
