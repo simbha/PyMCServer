@@ -11,6 +11,7 @@ import sys
 import threading
 import time
 import uuid
+import shutil
 
 server = None
 log = logging.getLogger("PyMCServer")
@@ -224,6 +225,13 @@ def initServer():
     global log, accesslog, server
     utils.mkdir(datadir)
     
+    configdir = os.path.join(datadir, "config")
+    utils.mkdir(configdir)
+    
+    users = os.path.join(configdir, "users.txt")
+    if not os.path.exists(users):
+        shutil.copyfile("res/users.txt", users)
+    
     # Setup console/file logging
     sh = logging.StreamHandler()
     sh.setLevel(logging.DEBUG)
@@ -235,7 +243,7 @@ def initServer():
     log.addHandler(sh)
     log.addHandler(fh)
     log.info("Starting PyMCServer, " + utils.getVersion())
-    log.info("W** SUCKS")
+    log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
     
     # Setup web access.log
     fh = logging.FileHandler(os.path.join(datadir, "access.log"))

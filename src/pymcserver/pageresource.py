@@ -27,10 +27,10 @@ def handlePage(handler, res, path):
         # Read the file 4 KB at a time and send it
         with open(filepath) as f:
             while True:
-                buffer = f.read(4096)
-                if len(buffer) == 0:
+                buf = f.read(4096)
+                if len(buf) == 0:
                     break
-                handler.wfile.write(buffer)
+                handler.wfile.write(buf)
             
     except IOError:
         handler.sendErrorPage(res)
