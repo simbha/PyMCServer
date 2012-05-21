@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pymcserver
 
 def testCommand(args):
     print """
@@ -11,3 +12,10 @@ def testCommand(args):
 §§_____§§__§§___§§§§____§§§§__§§____§§___§§§§
 """.strip()
     print " | ".join(args)
+
+def reloadCommand(args):
+    log = pymcserver.server.log
+    log.info("Reloading modules...")
+    for v in pymcserver.server.server.pageHandlers.itervalues():
+        reload(v)
+        log.info("Reloaded " + v.__name__)

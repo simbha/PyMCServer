@@ -1,6 +1,6 @@
 def handlePage(handler, res, path):
     res.code = 200
-    res.headers["Content-Type"] = "text/plain"
+    res.headers["Content-Type"] = "text/pingas"
     res.endHeaders()
     wfile = res.getWFile()
     wfile.write(handler.headers)

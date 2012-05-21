@@ -19,16 +19,18 @@ def handlePage(handler, res, path):
     filepath = os.path.join(__RESDIR, path.lstrip("/"))
     
     try:
+        # Get the mime type of the file and set the content type header
         mime = mimetypes.guess_type(filepath)[0]
         res.headers["Content-Type"] = mime
         res.endHeaders()
         
-        f = open(filepath)
-        while True:
-            buffer = f.read(4096)
-            if len(buffer) == 0:
-                break # eof 
-            handler.wfile.write(buffer)
+        # Read the file 4 KB at a time and send it
+        with open(filepath) as f:
+            while True:
+                buffer = f.read(4096)
+                if len(buffer) == 0:
+                    break
+                handler.wfile.write(buffer)
             
     except IOError:
         handler.sendErrorPage(res)

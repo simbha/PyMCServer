@@ -1,5 +1,6 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from pymcserver import cmds, utils, pagecookie, components, pageresource
+from pymcserver import cmds, utils, pagecookie, components, pageresource, \
+    pagelogin
 from pymcserver.utils import Session
 import Cookie
 import logging
@@ -22,6 +23,7 @@ _allCommands = {}
 allErrors = {
     403: ("Forbidden", "You have no access to go to that page."),
     404: ("Not found", "The page does not exist."),
+    405: ("Method not allowed", "Incorrect request method."),
     500: ("Server error", "Something went wrong. Check the PyMCServer logs.")
 }
 
@@ -135,11 +137,15 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
             self.send_header(key, value)
         self.end_headers()
         
+        msg = ""
+        if message:
+            msg = "\n<pre>%s</pre>" % message
+        
         self.wfile.write(server.pageComponents["header"]())
         self.wfile.write("""<div class="centerTop"></div>
 <div class="centerBox">
 <h2>%s - %s</h2>
-<p>%s</p>
+<p>%s</p>%s
 <p><a href="/">Back to PyMCServer home</a></p>
 <p class="small" style="margin-top: 48px">PyMCServer version %s running on %s.</p>
 </div>
@@ -147,6 +153,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
 """ % (res.code,
        allErrors.get(res.code, ("Unknown error"))[0],
        allErrors.get(res.code, (None, "Unknown description"))[1],
+       msg,
        utils.getVersion(),
        server.hostname))
         self.wfile.write(server.pageComponents["footer"]())
@@ -226,6 +233,7 @@ def initServer():
     # Register commands
     registerCommand("test", cmds.testCommand)
     registerCommand("pingas", cmds.testCommand)
+    registerCommand("reload", cmds.reloadCommand)
     
     server = WebServer("127.0.0.1", 8099)
     
@@ -236,6 +244,7 @@ def initServer():
     # Register page handlers
     server.pageHandlers["cookies"] = pagecookie
     server.pageHandlers["res"] = pageresource
+    server.pageHandlers["login"] = pagelogin
     
     if not "--noconsole" in sys.argv:        ConsoleHandlerThread().start()
     
