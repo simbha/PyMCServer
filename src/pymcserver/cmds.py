@@ -21,4 +21,5 @@ def reloadCommand(args):
         log.info("Reloaded " + v.__name__)
 
 def stopCommand(args):
+    pymcserver.server.log.warning("Stop command is glitchy, yeah threading is hard...")
     pymcserver.server.server.stop()

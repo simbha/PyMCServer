@@ -69,6 +69,8 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
             # If session is valid, update the last visited time
             self.getSession(sessid).time = time.time()
         
+        self.cursessid = sessid
+        
         path = str(self.path)
         mod = path.split("/")[1]
         relpath = "/" + "/".join(path.split("/")[2:])
@@ -113,16 +115,18 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         if not handled:
             self.sendErrorPage(res)
         
-    def getSession(self, sessid):        '''if "Cookie" in self.headers:
-            c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:
-                sessid = c["session"].value
-                if sessid in server.allSessions:
-                    return server.allSessions[sessid]
-                else:
-                    return None            else:                return None
-        else:            return None'''
+    def getSession(self, sessid=None):        """if sessid == None:
+            if "Cookie" in self.headers:
+                c = Cookie.SimpleCookie(self.headers["Cookie"])                if "session" in c:
+                    sessid = c["session"].value
+                    if sessid in server.allSessions:
+                        return server.allSessions[sessid]
+                    else:
+                        return None                else:                    return None
+            else:                return None"""
+        
         if sessid == None:
-            return None
+            return server.allSessions[self.cursessid]
         
         if sessid in server.allSessions:
             return server.allSessions[sessid]
@@ -144,14 +148,12 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
             msg = "\n<pre>%s</pre>" % message
         
         self.wfile.write(server.pageComponents["header"]())
-        self.wfile.write("""<div class="centerTop"></div>
-<div class="centerBox">
+        self.wfile.write("""<div class="centerBox">
 <h2>%s - %s</h2>
 <p>%s</p>%s
 <p><a href="/">Back to PyMCServer home</a></p>
 <p class="small" style="margin-top: 48px">PyMCServer version %s running on %s.</p>
 </div>
-<div class="centerBottom"></div>
 """ % (res.code,
        allErrors.get(res.code, ("Unknown error"))[0],
        allErrors.get(res.code, (None, "Unknown description"))[1],
@@ -262,4 +264,6 @@ def initServer():
     except EOFError:
         log.info("EOF from stdin detected.")
     finally:
-        server.stop()
+        # Stop the server if its still running
+        if server.running:
+            server.stop()

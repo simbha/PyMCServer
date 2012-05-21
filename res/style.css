@@ -44,3 +44,20 @@ a:hover {
 h1, h2, h3, h4, h5, h6 {
 	margin-top: 0.35em;
 }
+
+table {
+	width: 100%;
+}
+
+table input {
+	width: 100%;
+	border: 1px solid #181818;
+	border-right: 1px solid #383838;
+	border-bottom: 1px solid #383838;
+	background-color: #313131;
+	color: white;
+	border-radius: 3px;
+	outline: none;
+	padding: 2px;
+	text-shadow: 1px 1px 0px #111;
+}
