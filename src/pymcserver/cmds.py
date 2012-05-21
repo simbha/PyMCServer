@@ -19,3 +19,6 @@ def reloadCommand(args):
     for v in pymcserver.server.server.pageHandlers.itervalues():
         reload(v)
         log.info("Reloaded " + v.__name__)
+
+def stopCommand(args):
+    pymcserver.server.server.stop()

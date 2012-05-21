@@ -27,18 +27,20 @@ allErrors = {
     500: ("Server error", "Something went wrong. Check the PyMCServer logs.")
 }
 
-class WebServer:
+class WebServer():
     def __init__(self, host, port):        self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
         self.pageHandlers = {}        self.pageComponents = {}        self.allSessions = {}
         self.hostname = socket.gethostname()
+        
+        self.running = False
     
     def run(self):
+        self.running = True
         self.httpd.serve_forever()
     
-    def start(self):
-        self.run()
-    
     def stop(self):
+        self.running = False
+        log.info("Stopping PyMCServer...")
         self.httpd.socket.close()
         
 class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fmt, *args):
@@ -189,6 +191,7 @@ class Response:
 
 class ConsoleHandlerThread(threading.Thread):
     def run(self):
+        #while server.running:
         while True:
             line = raw_input("> ")
             if line:
@@ -202,6 +205,8 @@ class ConsoleHandlerThread(threading.Thread):
                         log.info("- %s" % i)
                 else:
                     log.error("Unknown command. Type 'help' for command list")
+            if not server.running:
+                break
 
 def registerCommand(name, function):
     _allCommands[name] = function
@@ -234,6 +239,7 @@ def initServer():
     registerCommand("test", cmds.testCommand)
     registerCommand("pingas", cmds.testCommand)
     registerCommand("reload", cmds.reloadCommand)
+    registerCommand("stop", cmds.stopCommand)
     
     server = WebServer("127.0.0.1", 8099)
     
@@ -246,9 +252,14 @@ def initServer():
     server.pageHandlers["res"] = pageresource
     server.pageHandlers["login"] = pagelogin
     
-    if not "--noconsole" in sys.argv:        ConsoleHandlerThread().start()
-    
+    cons = ConsoleHandlerThread()
+    if not "--noconsole" in sys.argv:        cons.start()
+        
     try:
         server.run()
     except KeyboardInterrupt:
+        log.info("KeyboardInterrupt detected.")
+    except EOFError:
+        log.info("EOF from stdin detected.")
+    finally:
         server.stop()
