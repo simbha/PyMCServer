@@ -25,7 +25,7 @@ def handlePage(handler, res, path):
 </table>
 </form>
 <p class="small" style="margin-top: 48px">PyMCServer version {0} running on {1}.</p>
-""".format(handler.getServer().hostname, utils.getVersion()))
+""".format(utils.getVersion(), handler.getServer().hostname))
             handler.wfile.write(handler.getServer().pageComponents["footer"]())
     elif path == "/action":
         if handler.command == "POST":
