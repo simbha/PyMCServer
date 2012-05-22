@@ -28,12 +28,13 @@ def handlePage(handler, res, path):
             res.headers["Location"] = "/"
             res.endHeaders()
         else:
-            res.code = 200
-            res.endHeaders()
-            handler.wfile.write(handler.getServer().pageComponents["header"]())
-            handler.wfile.write("""<div class="centerBox">
+            if handler.command == "GET":
+                res.code = 200
+                res.endHeaders()
+                handler.wfile.write(handler.getServer().pageComponents["header"]())
+                handler.wfile.write("""<div class="centerBox">
 <h2>Log in to PyMCServer</h2>
-<form action="/login/action" method="post">
+<form method="post">
 <table>
 <tr>
 <td width="50%">Username:</td><td width="50%"><input type="text" name="username"></td>
@@ -47,33 +48,28 @@ def handlePage(handler, res, path):
 </form>
 <p class="small" style="margin-top: 48px">PyMCServer version {0} running on {1}.</p>
 """.format(utils.getVersion(), handler.getServer().hostname))
-            handler.wfile.write(handler.getServer().pageComponents["footer"]())
-    elif path == "/action":
-        if handler.command == "POST":
-            res.code = 200
-            res.headers["Content-Type"] = "text/plain"
-            res.endHeaders()
-            read = handler.rfile.read(int(handler.headers["Content-Length"]))
-            handler.wfile.write(read + "\n")
-            handler.wfile.write(str(urlparse.parse_qs(read)) + "\n\n")
-            
-            parse = urlparse.parse_qs(read)
-            
-            try:
-                u = parse["username"][0]
-                p = parse["password"][0]
-            except KeyError:
-                handler.wfile.write("Bad\n")
-                return
-            
-            if isAuthorized(u, p):
-                handler.wfile.write("Authorized\n")
-            else:
-                handler.wfile.write("Not authorized\n")
-            
-        else:
-            res.code = 405
-            handler.sendErrorPage(res)
+                handler.wfile.write(handler.getServer().pageComponents["footer"]())
+            if handler.command == "POST":
+                res.code = 200
+                res.headers["Content-Type"] = "text/plain"
+                res.endHeaders()
+                read = handler.rfile.read(int(handler.headers["Content-Length"]))
+                handler.wfile.write(read + "\n")
+                handler.wfile.write(str(urlparse.parse_qs(read)) + "\n\n")
+                
+                parse = urlparse.parse_qs(read)
+                
+                try:
+                    u = parse["username"][0]
+                    p = parse["password"][0]
+                except KeyError:
+                    handler.wfile.write("Bad\n")
+                    return
+                
+                if isAuthorized(u, p):
+                    handler.wfile.write("Authorized\n")
+                else:
+                    handler.wfile.write("Not authorized\n")
     else:
         res.code = 404
         handler.sendErrorPage(res)
