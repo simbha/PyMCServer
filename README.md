@@ -1,9 +1,9 @@
 PyMCServer
 ==========
 
-PyMCServer is a web based Minecraft administration console.
+PyMCServer is a web based Minecraft server administration console written in Python.
 
 Installation
 ------------
 
-PyMCServer requires no installation. Simply run `./start.sh` to start PyMCServer.
+PyMCServer requires no installation. Simply run `./start.py` to start PyMCServer.
