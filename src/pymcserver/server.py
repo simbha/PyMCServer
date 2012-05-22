@@ -133,7 +133,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
             else:                return None"""
         
         if sessid == None:
-            return server.allSessions[self.cursessid]
+            return server.allSessions.get(self.cursessid, None)
         
         if sessid in server.allSessions:
             return server.allSessions[sessid]
