@@ -59,8 +59,12 @@ def handlePage(handler, res, path):
             
             parse = urlparse.parse_qs(read)
             
-            u = parse["username"][0]
-            p = parse["password"][0]
+            try:
+                u = parse["username"][0]
+                p = parse["password"][0]
+            except KeyError:
+                handler.wfile.write("Bad\n")
+                return
             
             if isAuthorized(u, p):
                 handler.wfile.write("Authorized\n")
