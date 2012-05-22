@@ -1,4 +1,4 @@
-import commands
+import subprocess
 import os
 import time
 
@@ -15,10 +15,13 @@ def getVersion():
     global curversion
     
     if not curversion:
-        output = commands.getstatusoutput("git describe --tags")
-        if output[0] == 0:
-            curversion = output[1]
-        else:
+        try:
+            com = subprocess.Popen(["git", "describe", "--tags"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output = com.stdout.readline().rstrip("\n")
+            com.wait()
+            
+            curversion = output
+        except:
             curversion = "UNKNOWNVERSION"
     
     return curversion
