@@ -4,6 +4,23 @@ import os
 import pymcserver
 import urlparse
 
+postbox = """<div class="centerBox">
+<h2>Log in to PyMCServer</h2>
+<form method="post">
+<table>
+<tr>
+<td width="50%">Username:</td><td width="50%"><input type="text" name="username"></td>
+</tr>
+<tr>
+<td>Password:</td><td><input type="password" name="password"></td>
+</tr>
+<tr>
+<td></td><td style="text-align: right"><input type="submit"></input></td>
+</table>
+</form>{0}
+<p class="small" style="margin-top: 48px">PyMCServer version {1} running on {2}.</p>
+"""
+
 def isAuthorized(user, pasw):
     with open(os.path.join(pymcserver.server.datadir, "config", "users.txt")) as f:
         for line in f:
@@ -32,44 +49,38 @@ def handlePage(handler, res, path):
                 res.code = 200
                 res.endHeaders()
                 handler.wfile.write(handler.getServer().pageComponents["header"]())
-                handler.wfile.write("""<div class="centerBox">
-<h2>Log in to PyMCServer</h2>
-<form method="post">
-<table>
-<tr>
-<td width="50%">Username:</td><td width="50%"><input type="text" name="username"></td>
-</tr>
-<tr>
-<td>Password:</td><td><input type="password" name="password"></td>
-</tr>
-<tr>
-<td></td><td style="text-align: right"><input type="submit"></input></td>
-</table>
-</form>
-<p class="small" style="margin-top: 48px">PyMCServer version {0} running on {1}.</p>
-""".format(utils.getVersion(), handler.getServer().hostname))
+                handler.wfile.write(postbox.format("", utils.getVersion(), handler.getServer().hostname))
                 handler.wfile.write(handler.getServer().pageComponents["footer"]())
             if handler.command == "POST":
-                res.code = 200
-                res.headers["Content-Type"] = "text/plain"
-                res.endHeaders()
-                read = handler.rfile.read(int(handler.headers["Content-Length"]))
-                handler.wfile.write(read + "\n")
-                handler.wfile.write(str(urlparse.parse_qs(read)) + "\n\n")
-                
-                parse = urlparse.parse_qs(read)
+                parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
                 
                 try:
                     u = parse["username"][0]
                     p = parse["password"][0]
                 except KeyError:
-                    handler.wfile.write("Bad\n")
+                    res.code = 200
+                    res.endHeaders()
+                    err = "\n<p class=\"error\">Missing username/password.</p>"
+                    
+                    handler.wfile.write(handler.getServer().pageComponents["header"]())
+                    handler.wfile.write(postbox.format(err, utils.getVersion(), handler.getServer().hostname))
+                    handler.wfile.write(handler.getServer().pageComponents["footer"]())
                     return
                 
                 if isAuthorized(u, p):
-                    handler.wfile.write("Authorized\n")
+                    handler.getSession().user = u
+                    res.code = 301
+                    res.headers["Location"] = "/manage"
+                    res.endHeaders()
                 else:
-                    handler.wfile.write("Not authorized\n")
+                    res.code = 200
+                    res.endHeaders()
+                    err = "\n<p class=\"error\">Username/password not correct.</p>"
+                    
+                    handler.wfile.write(handler.getServer().pageComponents["header"]())
+                    handler.wfile.write(postbox.format(err, utils.getVersion(), handler.getServer().hostname))
+                    handler.wfile.write(handler.getServer().pageComponents["footer"]())
+                    return
     else:
         res.code = 404
         handler.sendErrorPage(res)

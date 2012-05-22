@@ -28,6 +28,10 @@ body {
 	font-size: 1.8em;
 }
 
+.error {
+	color: red;
+}
+
 p.small {
 	font-size: 12px;
 }
