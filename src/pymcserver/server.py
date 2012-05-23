@@ -1,16 +1,17 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import cmds, utils, pagecookie, components, pageresource, \
-    pagelogin
+    pagelogin, pagemanage
 from pymcserver.utils import Session
+import ConfigParser
 import Cookie
 import logging
 import os
+import shutil
 import socket
 import sys
 import threading
 import time
 import uuid
-import shutil
 
 server = None
 log = logging.getLogger("PyMCServer")
@@ -199,6 +200,10 @@ class Response:
         self.__canceled = True
 
 class ConsoleHandlerThread(threading.Thread):
+    def __init__(self):
+        super(ConsoleHandlerThread, self).__init__()
+        self.setName("ConsoleHandlerThread")
+        
     def run(self):
         #while server.running:
         while True:
@@ -222,14 +227,27 @@ def registerCommand(name, function):
 
 def initServer():
     global log, accesslog, server
-    utils.mkdir(datadir)
     
+    # Setup data directory
+    utils.mkdir(datadir)
     configdir = os.path.join(datadir, "config")
     utils.mkdir(configdir)
     
+    # Setup user list
     users = os.path.join(configdir, "users.txt")
     if not os.path.exists(users):
         shutil.copyfile("res/users.txt", users)
+    
+    # Setup config file
+    conf = ConfigParser.RawConfigParser()
+    conf.read(os.path.join("res", "config.ini"))
+    confpath = os.path.join(configdir, "config.ini")
+    
+    if os.path.exists(confpath):
+        with open(confpath, "r") as fi:
+            conf.readfp(fi)
+    with open(confpath, "w") as fi:
+        conf.write(fi)
     
     # Setup console/file logging
     sh = logging.StreamHandler()
@@ -242,8 +260,10 @@ def initServer():
     log.addHandler(sh)
     log.addHandler(fh)
     log.info("Starting PyMCServer, " + utils.getVersion())
+    log.info("The URL is: http://localhost:%s" % conf.get("web", "port"))
     log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
     
+    # Import readline, if available
     try:
         if not "--noreadline" in sys.argv:
             import readline
@@ -264,7 +284,8 @@ def initServer():
     registerCommand("reload", cmds.reloadCommand)
     registerCommand("stop", cmds.stopCommand)
     
-    server = WebServer("127.0.0.1", 8099)
+    # Setup server
+    server = WebServer("127.0.0.1", conf.getint("web", "port"))
     
     # Register page components
     server.pageComponents["header"] = components.makeHeader
@@ -276,6 +297,7 @@ def initServer():
     server.pageHandlers["login"] = pagelogin
     server.pageHandlers["manage"] = pagemanage
     
+    # Create console handler
     cons = ConsoleHandlerThread()
     if not "--noconsole" in sys.argv:        cons.start()
         

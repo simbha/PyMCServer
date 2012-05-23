@@ -1,3 +1,4 @@
+# List all cookies, this was used for testing. Should be moved to a server command.
 def handlePage(handler, res, path):
     res.code = 200
     res.headers["Content-Type"] = "text/plain"
