@@ -21,3 +21,24 @@ def makeFooter():
 </body>
 </html>
 """
+
+def makeMenuBar(handler):
+    comp = """<div class="menubar">
+<table>
+<tr>
+<td>
+<ul class="menubarItems">
+<li><a href="#">w** SUCKS</a></li><li><a href="#">PS3 &gt; w**</a></li>
+</ul>
+</td>
+<td width="180px">
+Logged in as: {0}
+</td>
+<td width="64px">
+<a class="menuButton" href="/logout">Log out</a>
+</td>
+</tr>
+</table>
+</div>"""
+
+    return comp.format(handler.getSession().user)

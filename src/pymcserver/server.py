@@ -290,6 +290,7 @@ def initServer():
     # Register page components
     server.pageComponents["header"] = components.makeHeader
     server.pageComponents["footer"] = components.makeFooter
+    server.pageComponents["menubar"] = components.makeMenuBar
     
     # Register page handlers
     server.pageHandlers["cookies"] = pagecookie

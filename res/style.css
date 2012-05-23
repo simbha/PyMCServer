@@ -3,6 +3,7 @@ body {
 	color: white;
 	font-family: helvetica, arial, sans;
 	font-size: 14px;
+	margin: 0px;
 }
 
 .centerBox {
@@ -30,6 +31,34 @@ body {
 
 .error {
 	color: red;
+}
+
+div.menubar {
+	background: #313131;
+}
+
+div.menubar table {
+	border-collapse: collapse;
+}
+
+ul.menubarItems {
+	margin: 0;
+	padding: 0;
+}
+
+ul.menubarItems li {
+	display: inline;
+}
+
+ul.menubarItems li a, a.menuButton {
+	line-height: 28px;
+	padding: 6px 8px;
+	margin: 0px;
+	color: white;
+}
+
+ul.menubarItems li a:hover, a.menuButton:hover {
+	background: #515151;
 }
 
 p.small {
