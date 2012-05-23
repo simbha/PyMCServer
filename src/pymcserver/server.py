@@ -249,7 +249,7 @@ def initServer():
             import readline
             readline.clear_history()
     except ImportError:
-        log.warn("Could not import the readline module.")
+        pass
     
     # Setup web access.log
     fh = logging.FileHandler(os.path.join(datadir, "access.log"))
@@ -274,6 +274,7 @@ def initServer():
     server.pageHandlers["cookies"] = pagecookie
     server.pageHandlers["res"] = pageresource
     server.pageHandlers["login"] = pagelogin
+    server.pageHandlers["manage"] = pagemanage
     
     cons = ConsoleHandlerThread()
     if not "--noconsole" in sys.argv:        cons.start()
