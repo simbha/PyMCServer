@@ -1,6 +1,6 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import cmds, utils, pagecookie, components, pageresource, \
-    pagelogin, pagemanage
+    pagelogin, pagemanage, pagelogout
 from pymcserver.utils import Session
 import ConfigParser
 import Cookie
@@ -296,6 +296,7 @@ def initServer():
     server.pageHandlers["cookies"] = pagecookie
     server.pageHandlers["res"] = pageresource
     server.pageHandlers["login"] = pagelogin
+    server.pageHandlers["logout"] = pagelogout
     server.pageHandlers["manage"] = pagemanage
     
     # Create console handler
