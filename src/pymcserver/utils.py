@@ -1,7 +1,6 @@
 import subprocess
 import os
 import time
-from ConfigParser import ConfigParser
 
 curversion = None
 
