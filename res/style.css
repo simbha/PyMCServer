@@ -1,9 +1,10 @@
-body {
+body, html {
 	background-color: #151515;
 	color: white;
 	font-family: helvetica, arial, sans;
 	font-size: 14px;
 	margin: 0px;
+	height: 100%;
 }
 
 .centerBox {
@@ -39,6 +40,19 @@ div.menubar {
 
 div.menubar table {
 	border-collapse: collapse;
+}
+
+div.menubar table td {
+	vertical-align: middle;
+}
+
+div#wrapper {
+	height: 100%;
+}
+
+table#wrapper {
+	border-collapse: collapse;
+	height: 100%;
 }
 
 ul.menubarItems {
@@ -84,6 +98,7 @@ table {
 
 table td {
 	padding: 0px;
+	vertical-align: top;
 }
 
 /* Bad hack to get inputs aligned right */
