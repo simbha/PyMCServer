@@ -75,6 +75,27 @@ ul.menubarItems li a:hover, a.menuButton:hover {
 	background: #515151;
 }
 
+ul.list {
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+ul.list li {
+	border-bottom: 1px solid grey;
+	padding: 1px 0px;
+}
+
+ul.list li a {
+	color: white;
+	line-height: 24px;
+	display: block;
+}
+
+ul.list li a:hover {
+	background: #515151;
+}
+
 p.small {
 	font-size: 12px;
 }

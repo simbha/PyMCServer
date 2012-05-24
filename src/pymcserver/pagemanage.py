@@ -1,9 +1,18 @@
 pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top: 28px">
 <tr>
-<td style="background: green; width: 240px">1</td>
-<td style="background: black">2</td>
+<td style="background: #262626; width: 240px">{0}</td>
+<td style="background: black">{1}</td>
 </tr>
 </table>
+"""
+
+sidebar = """<h2>Servers</h2>
+<ul class="list">
+<li><a href="#">pingas</a></li>
+<li><a href="#">pingas</a></li>
+<li><a href="#">pingas</a></li>
+<li><a href="#">pingas</a></li>
+</ul>
 """
 
 #pagecode = """
@@ -16,7 +25,7 @@ def handlePage(handler, res, path):
         res.endHeaders()
         handler.wfile.write(handler.getServer().pageComponents["header"]())
         handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
-        handler.wfile.write(pagecode)
+        handler.wfile.write(pagecode.format(sidebar, "pingas"))
         handler.wfile.write(handler.getServer().pageComponents["footer"]())
     else:
         res.code = 404
