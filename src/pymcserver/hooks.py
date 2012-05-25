@@ -1,1 +1,3 @@
-def loginCheckHook(handler, res):    # Check cookie    pass
+def loginCheckHook(handler, res):
+	# Check cookie
+	pass

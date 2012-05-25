@@ -31,8 +31,11 @@ allErrors = {
 }
 
 class WebServer():
-    def __init__(self, host, port):        self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
-        self.pageHandlers = {}        self.pageComponents = {}        self.allSessions = {}
+    def __init__(self, host, port):
+		self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
+        self.pageHandlers = {}
+		self.pageComponents = {}
+		self.allSessions = {}
         self.hostname = socket.gethostname()
         
         self.running = False
@@ -46,7 +49,8 @@ class WebServer():
         log.info("Stopping PyMCServer...")
         self.httpd.socket.close()
         
-class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fmt, *args):
+class MCHTTPRequestHandler(BaseHTTPRequestHandler):
+	def log_message(self, fmt, *args):
         accesslog.info(fmt % args)
 
     def do_GET(self):
@@ -60,7 +64,8 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         sessid = None
         
         if "Cookie" in self.headers:
-            c = Cookie.SimpleCookie(self.headers["Cookie"])            if "session" in c:
+            c = Cookie.SimpleCookie(self.headers["Cookie"])
+			if "session" in c:
                 sessid = c["session"].value
                 
         self.cursessid = sessid
@@ -125,15 +130,20 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):    def log_message(self, fm
         if not handled:
             self.sendErrorPage(res)
         
-    def getSession(self, sessid=None):        """if sessid == None:
+    def getSession(self, sessid=None):
+	"""if sessid == None:
             if "Cookie" in self.headers:
-                c = Cookie.SimpleCookie(self.headers["Cookie"])                if "session" in c:
+                c = Cookie.SimpleCookie(self.headers["Cookie"])
+				if "session" in c:
                     sessid = c["session"].value
                     if sessid in server.allSessions:
                         return server.allSessions[sessid]
                     else:
-                        return None                else:                    return None
-            else:                return None"""
+                        return None
+				else:
+					return None
+            else:
+				return None"""
         
         if sessid == None:
             return server.allSessions.get(self.cursessid, None)
@@ -307,7 +317,8 @@ def initServer():
     
     # Create console handler
     cons = ConsoleHandlerThread()
-    if not "--noconsole" in sys.argv:        cons.start()
+    if not "--noconsole" in sys.argv:
+		cons.start()
         
     try:
         server.run()
