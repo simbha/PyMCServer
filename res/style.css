@@ -79,6 +79,7 @@ ul.list {
 	margin: 0px;
 	padding: 0px;
 	list-style: none;
+	border-top: 1px solid grey;
 }
 
 ul.list li {
@@ -90,10 +91,24 @@ ul.list li a {
 	color: white;
 	line-height: 24px;
 	display: block;
+	padding-left: 8px;
 }
 
 ul.list li a:hover {
 	background: #515151;
+}
+
+.listSelected a {
+	background: #757575;
+}
+
+.sidebar {
+	background: #262626;
+	width: 240px;
+}
+
+.sidebar h2 {
+	padding-left: 8px;
 }
 
 p.small {

@@ -1,6 +1,6 @@
 pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top: 28px">
 <tr>
-<td style="background: #262626; width: 240px">{0}</td>
+<td class="sidebar" >{0}</td>
 <td style="background: black">{1}</td>
 </tr>
 </table>
@@ -9,7 +9,7 @@ pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top
 sidebar = """<h2>Servers</h2>
 <ul class="list">
 <li><a href="#">pingas</a></li>
-<li><a href="#">pingas</a></li>
+<li class="listSelected"><a href="#">pingas</a></li>
 <li><a href="#">pingas</a></li>
 <li><a href="#">pingas</a></li>
 </ul>
