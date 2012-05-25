@@ -32,10 +32,10 @@ allErrors = {
 
 class WebServer():
     def __init__(self, host, port):
-		self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
+        self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
         self.pageHandlers = {}
-		self.pageComponents = {}
-		self.allSessions = {}
+        self.pageComponents = {}
+        self.allSessions = {}
         self.hostname = socket.gethostname()
         
         self.running = False
@@ -50,7 +50,7 @@ class WebServer():
         self.httpd.socket.close()
         
 class MCHTTPRequestHandler(BaseHTTPRequestHandler):
-	def log_message(self, fmt, *args):
+    def log_message(self, fmt, *args):
         accesslog.info(fmt % args)
 
     def do_GET(self):
@@ -65,7 +65,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         
         if "Cookie" in self.headers:
             c = Cookie.SimpleCookie(self.headers["Cookie"])
-			if "session" in c:
+            if "session" in c:
                 sessid = c["session"].value
                 
         self.cursessid = sessid
@@ -81,7 +81,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
             cookie["session"] = sessid
             cookie["session"]["Path"] = "/"
             
-            res.headers["Set-Cookie"] = cookie.output(header="")
+            res.headers["Set-Cookie"] = cookie.output(header = "")
         else:
             # If session is valid, update the last visited time
             self.getSession(sessid).time = time.time()
@@ -130,8 +130,8 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         if not handled:
             self.sendErrorPage(res)
         
-    def getSession(self, sessid=None):
-	"""if sessid == None:
+    def getSession(self, sessid = None):
+        """if sessid == None:
             if "Cookie" in self.headers:
                 c = Cookie.SimpleCookie(self.headers["Cookie"])
 				if "session" in c:
@@ -157,7 +157,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         global server
         return server
     
-    def sendErrorPage(self, res, message=None):
+    def sendErrorPage(self, res, message = None):
         self.send_response(res.code)
         for key, value in res.headers.iteritems():
             self.send_header(key, value)
@@ -318,7 +318,7 @@ def initServer():
     # Create console handler
     cons = ConsoleHandlerThread()
     if not "--noconsole" in sys.argv:
-		cons.start()
+        cons.start()
         
     try:
         server.run()
