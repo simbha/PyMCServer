@@ -5,8 +5,10 @@ import time
 curversion = None
 VERSION = "0.1"
 
-class Session:    def __init__(self):
-        self.user = None        self.time = time.time()
+class Session:
+	def __init__(self):
+        self.user = None
+		self.time = time.time()
 
 def mkdir(path):
     if not os.path.exists(path):
