@@ -32,10 +32,10 @@ allErrors = {
 
 class WebServer():
     def __init__(self, host, port):
-		self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
+        self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
         self.pageHandlers = {}
-		self.pageComponents = {}
-		self.allSessions = {}
+        self.pageComponents = {}
+        self.allSessions = {}
         self.hostname = socket.gethostname()
         
         self.running = False
@@ -50,7 +50,7 @@ class WebServer():
         self.httpd.socket.close()
         
 class MCHTTPRequestHandler(BaseHTTPRequestHandler):
-	def log_message(self, fmt, *args):
+    def log_message(self, fmt, *args):
         accesslog.info(fmt % args)
 
     def do_GET(self):
@@ -65,7 +65,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         
         if "Cookie" in self.headers:
             c = Cookie.SimpleCookie(self.headers["Cookie"])
-			if "session" in c:
+            if "session" in c:
                 sessid = c["session"].value
                 
         self.cursessid = sessid
