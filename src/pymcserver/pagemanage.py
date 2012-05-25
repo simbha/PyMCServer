@@ -32,27 +32,28 @@ content = """<h2>Pingas</h2>
 
 def handlePage(handler, res, path):
     if path == "/":
-        if handler.command == "GET":
-            res.code = 200
-            res.endHeaders()
-            handler.wfile.write(handler.getServer().pageComponents["header"]())
-            handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
-            handler.wfile.write(pagecode.format(sidebar, content))
-            handler.wfile.write(handler.getServer().pageComponents["footer"]())
-        elif handler.command == "POST":
+        res.code = 200
+        res.endHeaders()
+        
+        if handler.command == "POST":
             parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
             com = parse["command"][0]
             pymcserver.server.run.allServers["server1"].sendCommand(com)
             
+        handler.wfile.write(handler.getServer().pageComponents["header"]())
+        handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+        handler.wfile.write(pagecode.format(sidebar, content))
+        handler.wfile.write(handler.getServer().pageComponents["footer"]())
+            
     elif path == "/start":
-        res.code = 200
-        res.headers["Content-Type"] = "text/plain"
+        res.code = 301
+        res.headers["Location"] = "/manage"
         res.endHeaders()
         pymcserver.server.run.allServers["server1"].startServer(None)
         
     elif path == "/stop":
-        res.code = 200
-        res.headers["Content-Type"] = "text/plain"
+        res.code = 301
+        res.headers["Location"] = "/manage"
         res.endHeaders()
         pymcserver.server.run.allServers["server1"].stopServer(None)
     else:

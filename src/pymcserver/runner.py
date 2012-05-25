@@ -35,16 +35,16 @@ class BukkitServer(BaseServer):
         urllib.urlretrieve("http://cbukk.it/craftbukkit.jar", os.path.join(self.path, "craftbukkit.jar"))
         
     def sendCommand(self, command):
-        self.serverThread.stdin.write(command + "\n")
-    
+        self.serverThread.stdin.write(command + os.linesep)
+         
     def startServer(self, args):
         if not os.path.exists(os.path.join(self.path, "craftbukkit.jar")):
             self.downloadServer()
             
-        self.serverThread = subprocess.Popen(["java", "-jar", "craftbukkit.jar"], stdin=subprocess.PIPE, cwd=self.path)
+        self.serverThread = subprocess.Popen(["java", "-jar", "craftbukkit.jar", "--nojline"], stdin=subprocess.PIPE, cwd=self.path)
     
     def stopServer(self, args):
-        self.serverThread.stdin.write("stop\n")
+        self.serverThread.stdin.write("stop" + os.linesep)
         self.serverThread.wait()
         
     def killServer(self, args):
