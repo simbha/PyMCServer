@@ -3,6 +3,7 @@ import os
 import time
 
 curversion = None
+VERSION = "0.1"
 
 class Session:    def __init__(self):
         self.user = None        self.time = time.time()
@@ -22,6 +23,6 @@ def getVersion():
             
             curversion = output
         except:
-            curversion = "UNKNOWNVERSION"
+            curversion = VERSION
     
     return curversion

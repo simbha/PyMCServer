@@ -1,6 +1,6 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import cmds, utils, pagecookie, components, pageresource, \
-    pagelogin, pagemanage, pagelogout
+    pagelogin, pagemanage, pagelogout, runner
 from pymcserver.utils import Session
 import ConfigParser
 import Cookie
@@ -14,10 +14,12 @@ import time
 import uuid
 
 server = None
+run = None
 log = logging.getLogger("PyMCServer")
 accesslog = logging.getLogger("WebAccess")
 datadir = "data"
 active = True
+
 
 _allCommands = {}
 
@@ -226,7 +228,7 @@ def registerCommand(name, function):
     _allCommands[name] = function
 
 def initServer():
-    global log, accesslog, server
+    global log, accesslog, server, run
     
     # Setup data directory
     utils.mkdir(datadir)
@@ -299,6 +301,10 @@ def initServer():
     server.pageHandlers["logout"] = pagelogout
     server.pageHandlers["manage"] = pagemanage
     
+    # Test server
+    run = runner.ServerRunner()
+    run.allServers["server1"] = runner.BukkitServer(os.path.join(datadir, "servers", "server1"))
+    
     # Create console handler
     cons = ConsoleHandlerThread()
     if not "--noconsole" in sys.argv:        cons.start()
@@ -310,6 +316,10 @@ def initServer():
     except EOFError:
         log.info("EOF from stdin detected.")
     finally:
+        # Stop all mc servers
+        for v in run.allServers.itervalues():
+            v.stopServer()
+            
         # Stop the server if its still running
         if server.running:
             server.stop()

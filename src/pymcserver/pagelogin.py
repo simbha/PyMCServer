@@ -2,7 +2,6 @@ from pymcserver import utils
 import hashlib
 import os
 import pymcserver
-import random
 import urlparse
 
 postbox = """<div class="centerBox">
