@@ -1,4 +1,4 @@
-body, html {
+body,html {
 	background-color: #151515;
 	color: white;
 	font-family: helvetica, arial, sans;
@@ -64,14 +64,14 @@ ul.menubarItems li {
 	display: inline;
 }
 
-ul.menubarItems li a, a.menuButton {
+ul.menubarItems li a,a.menuButton {
 	line-height: 28px;
 	padding: 6px 8px;
 	margin: 0px;
 	color: white;
 }
 
-ul.menubarItems li a:hover, a.menuButton:hover {
+ul.menubarItems li a:hover,a.menuButton:hover {
 	background: #515151;
 }
 
@@ -124,7 +124,7 @@ a:hover {
 	color: #EEEEEE;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,h2,h3,h4,h5,h6 {
 	margin-top: 0.35em;
 }
 
@@ -138,15 +138,15 @@ table td {
 }
 
 /* Bad hack to get inputs aligned right */
-table input[type="text"], table input[type="password"] {
+table input[type="text"],table input[type="password"] {
 	width: 95%;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"],input[type="password"] {
 	border: 1px solid #181818;
 	border-right: 1px solid #383838;
 	border-bottom: 1px solid #383838;
-	background-color: #313131;
+    background-color: #313131;
 	color: white;
 	border-radius: 3px;
 	outline: none;

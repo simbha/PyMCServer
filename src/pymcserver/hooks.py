@@ -1,3 +1,3 @@
 def loginCheckHook(handler, res):
-	# Check cookie
-	pass
+    # Check cookie
+    pass

@@ -52,7 +52,7 @@ class WebServer():
 class MCHTTPRequestHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         accesslog.info(fmt % args)
-
+    
     def do_GET(self):
         self.handlePage()
         
@@ -134,16 +134,16 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         """if sessid == None:
             if "Cookie" in self.headers:
                 c = Cookie.SimpleCookie(self.headers["Cookie"])
-				if "session" in c:
+                if "session" in c:
                     sessid = c["session"].value
                     if sessid in server.allSessions:
                         return server.allSessions[sessid]
                     else:
                         return None
-				else:
-					return None
+                else:
+                    return None
             else:
-				return None"""
+                return None"""
         
         if sessid == None:
             return server.allSessions.get(self.cursessid, None)
