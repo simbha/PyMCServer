@@ -55,7 +55,6 @@ def handlePage(handler, res, path):
         res.headers["Content-Type"] = "text/plain"
         res.endHeaders()
         pymcserver.server.run.allServers["server1"].stopServer(None)
-        
     else:
         res.code = 404
         handler.sendErrorPage(res)
