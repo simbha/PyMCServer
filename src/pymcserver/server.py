@@ -277,8 +277,6 @@ def initServer():
     log.addHandler(sh)
     log.addHandler(fh)
     log.info("Starting PyMCServer, " + utils.getVersion())
-    log.info("The URL is: http://localhost:%s" % conf.get("web", "port"))
-    log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
     
     # Import readline, if available
     try:
@@ -302,7 +300,7 @@ def initServer():
     registerCommand("stop", cmds.stopCommand)
     
     # Setup server
-    server = WebServer("127.0.0.1", conf.getint("web", "port"))
+    server = WebServer("0.0.0.0", conf.getint("web", "port"))
     
     # Register page components
     server.pageComponents["header"] = components.makeHeader
@@ -315,6 +313,9 @@ def initServer():
     server.pageHandlers["login"] = pagelogin
     server.pageHandlers["logout"] = pagelogout
     server.pageHandlers["manage"] = pagemanage
+    
+    log.info("The URL is: http://%s:%s" % (conf.get("web", "port")))
+    log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
     
     # Test server
     run = runner.ServerRunner()
