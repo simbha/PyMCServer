@@ -58,16 +58,17 @@ def handlePage(handler, res, path):
     if path == "/":
         res.code = 200
         res.endHeaders()
-        try:
-            log = utils.tail(open(os.path.join(pymcserver.server.run.allServers["server1"].getPath(), "server.log")))
-        except:
-            log = ""
         
         if handler.command == "POST":
             parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
             com = parse["command"][0]
             pymcserver.server.run.allServers["server1"].sendCommand(com)
             time.sleep(1) # PINGAS!
+            
+        try:
+            log = utils.tail(open(os.path.join(pymcserver.server.run.allServers["server1"].getPath(), "server.log")))
+        except:
+            log = ""
             
         handler.wfile.write(handler.getServer().pageComponents["header"]())
         handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
