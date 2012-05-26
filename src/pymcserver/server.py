@@ -314,7 +314,7 @@ def initServer():
     server.pageHandlers["logout"] = pagelogout
     server.pageHandlers["manage"] = pagemanage
     
-    log.info("The URL is: http://%s:%s" % (conf.get("web", "port")))
+    log.info("The URL is: http://%s:%s" % (server.hostname, conf.get("web", "port")))
     log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
     
     # Test server
