@@ -66,7 +66,7 @@ def handlePage(handler, res, path):
             time.sleep(1) # PINGAS!
             
         try:
-            log = utils.tail(open(os.path.join(pymcserver.server.run.allServers["server1"].getPath(), "server.log")))
+            log = cgi.escape(utils.tail(open(os.path.join(pymcserver.server.run.allServers["server1"].getPath(), "server.log"))))
         except:
             log = ""
             
