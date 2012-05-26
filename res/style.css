@@ -34,6 +34,14 @@ body,html {
 	color: red;
 }
 
+pre {
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: -pre-wrap; /* Opera */
+    white-space: -o-pre-wrap; /* Opera */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+    word-wrap: break-word; /* IE 5.5+ */
+}
+
 div.menubar {
 	background: #313131;
 }
@@ -114,6 +122,11 @@ ul.list li a:hover {
 .content {
 	background: black;
 	padding: 0px 8px;
+}
+
+.console {
+	overflow: auto;
+	font-family: "courier new", monospace;
 }
 
 p.small {

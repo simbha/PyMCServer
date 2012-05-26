@@ -13,6 +13,9 @@ class BaseServer(object):
     def downloadServer(self):
         raise NotImplementedError()
     
+    def getPath(self):
+        raise NotImplementedError()
+    
     def killServer(self, args):
         raise NotImplementedError()
         
@@ -24,7 +27,7 @@ class BaseServer(object):
     
     def sendCommand(self, command):
         raise NotImplementedError()
-
+    
 class BukkitServer(BaseServer):
     def __init__(self, path):
         self.path = path
@@ -33,6 +36,9 @@ class BukkitServer(BaseServer):
         
     def downloadServer(self):
         urllib.urlretrieve("http://cbukk.it/craftbukkit.jar", os.path.join(self.path, "craftbukkit.jar"))
+    
+    def getPath(self):
+        return self.path
         
     def sendCommand(self, command):
         self.serverThread.stdin.write(command + os.linesep)

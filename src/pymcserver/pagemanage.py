@@ -1,4 +1,8 @@
+from pymcserver import utils
+import cgi
+import os
 import pymcserver
+import time
 import urlparse
 
 pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top: 28px">
@@ -24,6 +28,8 @@ content = """<h2>Pingas</h2>
 <td style="width: 50%; padding-right: 8px">
     <h2>Console</h2>
     <form method="POST">
+    <pre style="width: 100%; font-size: 8px; overflow-x: auto">{cons}
+    </pre>
     <table>
     <tr>
     <td style="vertical-align: middle; padding-right: 8px">Command:</td>
@@ -57,10 +63,12 @@ def handlePage(handler, res, path):
             parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
             com = parse["command"][0]
             pymcserver.server.run.allServers["server1"].sendCommand(com)
+            time.sleep(1.5) # PINGAS!
             
+        log = utils.tail(open(os.path.join(pymcserver.server.run.allServers["server1"].getPath(), "server.log")))
         handler.wfile.write(handler.getServer().pageComponents["header"]())
         handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
-        handler.wfile.write(pagecode.format(sidebar, content))
+        handler.wfile.write(pagecode.format(sidebar, content.format(cons=log)))
         handler.wfile.write(handler.getServer().pageComponents["footer"]())
             
     elif path == "/start":
