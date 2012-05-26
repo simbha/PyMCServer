@@ -196,6 +196,11 @@ class Response:
     def endHeaders(self):
         '''Once headers are sent, the page must be sent.'''
         self.handler.send_response(self.code)
+        
+        # Some hack to prevent chrome to screw up redirects
+        if self.code == 301:
+            self.headers["Cache-Control"] = "no-cache"
+        
         for key, value in self.headers.iteritems():
             self.handler.send_header(key, value)
         self.handler.end_headers()
