@@ -111,6 +111,11 @@ ul.list li a:hover {
 	padding-left: 8px;
 }
 
+.content {
+	background: black;
+	padding: 0px 8px;
+}
+
 p.small {
 	font-size: 12px;
 }

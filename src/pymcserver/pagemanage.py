@@ -4,7 +4,7 @@ import urlparse
 pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top: 28px">
 <tr>
 <td class="sidebar" >{0}</td>
-<td style="background: black">{1}</td>
+<td class="content">{1}</td>
 </tr>
 </table>
 """
@@ -19,11 +19,29 @@ sidebar = """<h2>Servers</h2>
 """
 
 content = """<h2>Pingas</h2>
-<p><a href="/manage/start">Start server</a></p>
-<p><a href="/manage/stop">Stop server</a></p>
-<form method="POST">
-<p>Command: <input type="text" name="command"> <input type="submit" value="Send"></p>
-</form>
+<table>
+<tr>
+<td style="width: 50%; padding-right: 8px">
+    <h2>Console</h2>
+    <form method="POST">
+    <table>
+    <tr>
+    <td style="vertical-align: middle; padding-right: 8px">Command:</td>
+    <td style="width: 100%"><input name="command" type="text" style="width: 100%"></td>
+    <td style="padding-left: 12px"><input type="submit" value="Send"></input></td>
+    </tr>
+    </table>
+    </form>
+</td>
+<td style="width: 50%; padding-left: 8px">
+    <h2>Actions</h2>
+    <ul>
+    <li><a href="/manage/start">Start server</a></li>
+    <li><a href="/manage/stop">Stop server</a></li>
+    </ul>
+</td>
+</tr>
+</table>
 """
 
 #pagecode = """
