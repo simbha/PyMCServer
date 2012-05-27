@@ -2,7 +2,7 @@
 import os
 import mimetypes
 
-__RESDIR="./res"
+__RESDIR = "./res"
 
 def handlePage(handler, res, path):
     """Open a resouce, find its mime type and send it."""
@@ -33,4 +33,5 @@ def handlePage(handler, res, path):
                 handler.wfile.write(buf)
             
     except IOError:
+        res.code = 404
         handler.sendErrorPage(res)

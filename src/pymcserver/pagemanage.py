@@ -33,7 +33,7 @@ content = """<h2>Pingas</h2>
     <table>
     <tr>
     <td style="vertical-align: middle; padding-right: 8px">Command:</td>
-    <td style="width: 100%"><input name="command" type="text" style="width: 100%"></td>
+    <td style="width: 100%"><input name="command" type="text" id="commandEntry" style="width: 100%"></td>
     <td style="padding-left: 12px"><input type="submit" value="Send"></input></td>
     </tr>
     </table>
@@ -48,6 +48,15 @@ content = """<h2>Pingas</h2>
 </td>
 </tr>
 </table>
+"""
+
+script = """<script type="text/javascript">
+function onLoad()
+{
+    document.getElementById("commandEntry").focus()
+}
+window.onload = onLoad
+</script>
 """
 
 #pagecode = """
@@ -70,9 +79,9 @@ def handlePage(handler, res, path):
         except:
             log = ""
             
-        handler.wfile.write(handler.getServer().pageComponents["header"]())
+        handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
         handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
-        handler.wfile.write(pagecode.format(sidebar, content.format(cons = log)))
+        handler.wfile.write(pagecode.format(sidebar, content.format(cons=log)))
         handler.wfile.write(handler.getServer().pageComponents["footer"]())
             
     elif path == "/start":
