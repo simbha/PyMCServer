@@ -17,12 +17,12 @@ def mkdir(path):
 def tail(f, window=20):
     BUFSIZ = 2048
     f.seek(0, 2)
-    bytes = f.tell()
+    numbytes = f.tell()
     size = window
     block = -1
     data = []
-    while size > 0 and bytes > 0:
-        if (bytes - BUFSIZ > 0):
+    while size > 0 and numbytes > 0:
+        if (numbytes - BUFSIZ > 0):
             # Seek back one whole BUFSIZ
             f.seek(block*BUFSIZ, 2)
             # read BUFFER
@@ -31,10 +31,10 @@ def tail(f, window=20):
             # file too small, start from begining
             f.seek(0,0)
             # only read what was not read
-            data.append(f.read(bytes))
+            data.append(f.read(numbytes))
         linesFound = data[-1].count('\n')
         size -= linesFound
-        bytes -= BUFSIZ
+        numbytes -= BUFSIZ
         block -= 1
     return '\n'.join(''.join(data).splitlines()[-window:])
 

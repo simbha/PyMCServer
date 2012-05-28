@@ -2,7 +2,6 @@ from pymcserver import utils
 import cgi
 import os
 import pymcserver
-import random
 import time
 import traceback
 import urlparse
