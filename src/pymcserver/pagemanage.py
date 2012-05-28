@@ -96,9 +96,12 @@ def handlePage(handler, res, path):
                     else:
                         error = "Server is already stopped."
                 elif "command" in parse:
-                    com = parse["command"][0]
-                    server.sendCommand(com)
-                    time.sleep(1) # PINGAS!
+                    if server.isRunning():
+                        com = parse["command"][0]
+                        server.sendCommand(com)
+                        time.sleep(1) # PINGAS!
+                    else:
+                        error = "The server is not running."
                     
                 if error:
                     error = """<p class="error">{0}</p>\n""".format(error)
