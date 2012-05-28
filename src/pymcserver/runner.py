@@ -46,7 +46,7 @@ class BukkitServer(BaseServer):
             totalblocks = size / bs
             dledblocks = bn
             progress = int((float(dledblocks) / float(totalblocks)) * 100)
-            pymcserver.server.log.info("Downloading craftbukkit.jar... %s%" % progress)
+            pymcserver.server.log.info("Downloading craftbukkit.jar... %s%%" % progress)
         
     def downloadServer(self):
         pymcserver.server.log.info("Downloading craftbukkit.jar...")
