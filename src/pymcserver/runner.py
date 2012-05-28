@@ -43,9 +43,9 @@ class BukkitServer(BaseServer):
         # Show download progress but only output to the console every second
         if time.time() - self.__dllasttime > 1:
             self.__dllasttime = time.time()
-            totalblocks = size/bs
+            totalblocks = size / bs
             dledblocks = bn
-            progress = int((float(dledblocks)/float(totalblocks))*100)
+            progress = int((float(dledblocks) / float(totalblocks)) * 100)
             pymcserver.server.log.info("Downloading craftbukkit.jar... %s%" % progress)
         
     def downloadServer(self):
@@ -54,15 +54,19 @@ class BukkitServer(BaseServer):
     
     def getPath(self):
         return self.path
-        def isRunning(self):
+    
+    def isRunning(self):
         if not (self.serverThread == None):
             return self.serverThread.poll() == None and True or False
-        else:            return False        
+        else:
+            return False
+        
     def sendCommand(self, command):
         self.serverThread.stdin.write(command + os.linesep)
          
     def startServer(self, args):
-        if self.isRunning():            return
+        if self.isRunning():
+            return
         
         if not os.path.exists(os.path.join(self.path, "craftbukkit.jar")):
             self.downloadServer()
@@ -70,11 +74,13 @@ class BukkitServer(BaseServer):
         self.serverThread = subprocess.Popen(["java", "-jar", "craftbukkit.jar", "--nojline"], stdin=subprocess.PIPE, cwd=self.path)
     
     def stopServer(self):
-        if not self.isRunning():            return
+        if not self.isRunning():
+            return
         
         self.serverThread.stdin.write("stop" + os.linesep)
         
     def killServer(self):
-        if not self.isRunning():            return
+        if not self.isRunning():
+            return
         
         self.serverThread.kill()
