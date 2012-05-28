@@ -2,7 +2,9 @@ from pymcserver import utils
 import cgi
 import os
 import pymcserver
+import random
 import time
+import traceback
 import urlparse
 
 pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top: 28px">
@@ -22,7 +24,7 @@ sidebar = """<h2>Servers</h2>
 </ul>
 """
 
-content = """<h2>Pingas</h2>
+content = """<h2>Pingas</h2>{err}
 <table>
 <tr>
 <td style="width: 50%; padding-right: 8px">
@@ -41,10 +43,17 @@ content = """<h2>Pingas</h2>
 </td>
 <td style="width: 50%; padding-left: 8px">
     <h2>Actions</h2>
-    <ul>
+    <!--<ul>
     <li><a href="/manage/start">Start server</a></li>
     <li><a href="/manage/stop">Stop server</a></li>
+    </ul>-->
+    <form method="POST">
+    <ul>
+    <li><input type="submit" name="startServer" value="Start server"></li>
+    <li><input type="submit" name="stopServer" value="Stop server"></li>
+    <li><input type="submit" name="killServer" value="Force stop server"></li>
     </ul>
+    </form>
 </td>
 </tr>
 </table>
@@ -53,7 +62,7 @@ content = """<h2>Pingas</h2>
 script = """<script type="text/javascript">
 function onLoad()
 {
-    document.getElementById("commandEntry").focus()
+    document.getElementById("commandEntry").focus();
 }
 window.onload = onLoad
 </script>
@@ -65,14 +74,41 @@ window.onload = onLoad
 
 def handlePage(handler, res, path):
     if path == "/":
-        res.code = 200
-        res.endHeaders()
-        
+        error = ""
         if handler.command == "POST":
             parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
-            com = parse["command"][0]
-            pymcserver.server.run.allServers["server1"].sendCommand(com)
-            time.sleep(1) # PINGAS!
+            
+            try:
+                server = pymcserver.server.run.allServers["server1"]
+                if "startServer" in parse:
+                    if not server.isRunning():
+                        server.startServer(None)
+                    else:
+                        error = "Server is already running."
+                elif "stopServer" in parse:
+                    if server.isRunning():
+                        server.stopServer()
+                    else:
+                        error = "Server is already stopped."
+                elif "killServer" in parse:
+                    if server.isRunning():
+                        server.killServer()
+                    else:
+                        error = "Server is already stopped."
+                elif "command" in parse:
+                    com = parse["command"][0]
+                    server.sendCommand(com)
+                    time.sleep(1) # PINGAS!
+                    
+                if error:
+                    error = """<p class="error">{0}</p>\n""".format(error)
+                else:
+                    error = ""
+            except:
+                traceback.print_exc()
+            
+        res.code = 200
+        res.endHeaders()
             
         try:
             log = cgi.escape(utils.tail(open(os.path.join(pymcserver.server.run.allServers["server1"].getPath(), "server.log"))))
@@ -81,20 +117,9 @@ def handlePage(handler, res, path):
             
         handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
         handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
-        handler.wfile.write(pagecode.format(sidebar, content.format(cons=log)))
+        handler.wfile.write(pagecode.format(sidebar, content.format(cons=log, err=error)))
         handler.wfile.write(handler.getServer().pageComponents["footer"]())
-            
-    elif path == "/start":
-        res.code = 301
-        res.headers["Location"] = "/manage"
-        res.endHeaders()
-        pymcserver.server.run.allServers["server1"].startServer(None)
         
-    elif path == "/stop":
-        res.code = 301
-        res.headers["Location"] = "/manage"
-        res.endHeaders()
-        pymcserver.server.run.allServers["server1"].stopServer(None)
     else:
         res.code = 404
         handler.sendErrorPage(res)

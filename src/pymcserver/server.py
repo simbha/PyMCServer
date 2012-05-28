@@ -20,7 +20,6 @@ accesslog = logging.getLogger("WebAccess")
 datadir = "data"
 active = True
 
-
 _allCommands = {}
 
 allErrors = {
@@ -276,7 +275,7 @@ def initServer():
     log.setLevel(logging.DEBUG)
     log.addHandler(sh)
     log.addHandler(fh)
-    log.info("Starting PyMCServer, " + utils.getVersion())
+    log.info("Starting PyMCServer, version " + utils.getVersion())
     
     # Import readline, if available
     try:
@@ -314,18 +313,18 @@ def initServer():
     server.pageHandlers["logout"] = pagelogout
     server.pageHandlers["manage"] = pagemanage
     
-    log.info("The URL is: http://%s:%s" % (server.hostname, conf.get("web", "port")))
-    log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
-    
     # Test server
     run = runner.ServerRunner()
     run.allServers["server1"] = runner.BukkitServer(os.path.join(datadir, "servers", "server1"))
+    
+    log.info("The URL is: http://%s:%s" % (server.hostname, conf.get("web", "port")))
+    log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
     
     # Create console handler
     cons = ConsoleHandlerThread()
     if not "--noconsole" in sys.argv:
         cons.start()
-        
+    
     try:
         server.run()
     except KeyboardInterrupt:
