@@ -243,6 +243,7 @@ def registerCommand(name, function):
 
 def initServer():
     global log, accesslog, server, run
+    startTime = time.time()
     
     # Setup data directory
     utils.mkdir(datadir)
@@ -313,10 +314,18 @@ def initServer():
     server.pageHandlers["logout"] = pagelogout
     server.pageHandlers["manage"] = pagemanage
     
-    # Test server
+    # Import all the servers
     run = runner.ServerRunner()
-    run.allServers["server1"] = runner.BukkitServer(os.path.join(datadir, "servers", "server1"))
+    #run.allServers["server1"] = runner.BukkitServer(os.path.join(datadir, "servers", "server1"))
     
+    serverdir = os.path.join(datadir, "servers")
+    for i in os.listdir(serverdir):
+        path = os.path.join(serverdir, i)
+        if os.path.isdir(path):
+            run.allServers[i] = runner.BukkitServer(path)
+            log.info("Loaded server '%s'" % i)
+    
+    log.info("Done (%ss)!" % str(round(time.time() - startTime, 2)))
     log.info("The URL is: http://%s:%s" % (server.hostname, conf.get("web", "port")))
     log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
     

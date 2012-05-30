@@ -8,7 +8,7 @@ import urlparse
 
 pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top: 28px">
 <tr>
-<td class="sidebar" >{0}</td>
+<td class="sidebar">{0}</td>
 <td class="content">{1}</td>
 </tr>
 </table>
@@ -74,7 +74,7 @@ window.onload = onLoad
 def handlePage(handler, res, path):
     if path == "/":
         error = ""
-        if handler.command == "POST":
+        '''if handler.command == "POST":
             parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
             
             try:
@@ -120,6 +120,21 @@ def handlePage(handler, res, path):
         handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
         handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
         handler.wfile.write(pagecode.format(sidebar, content.format(cons=log, err=error)))
+        handler.wfile.write(handler.getServer().pageComponents["footer"]())'''
+        
+        content = """<h2>Server list</h2>
+        <table>"""
+        for k, v in pymcserver.server.run.allServers.iteritems():
+            content += "<tr>"
+            content += "<td>{0}</td>".format(k)
+            content += "<td>{0}</td>".format(v.isRunning() and '<span style="color: green">Running</span>' or '<span style="color: red">Stopped</span>')
+            content += "</tr>"
+            
+        content += "</table>"
+        
+        handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
+        handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+        handler.wfile.write(pagecode.format(sidebar, content))
         handler.wfile.write(handler.getServer().pageComponents["footer"]())
         
     else:
