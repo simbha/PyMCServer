@@ -14,16 +14,8 @@ pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top
 </table>
 """
 
-sidebar = """<h2>Servers</h2>
-<ul class="list">
-<li><a href="#">pingas</a></li>
-<li class="listSelected"><a href="#">pingas</a></li>
-<li><a href="#">pingas</a></li>
-<li><a href="#">pingas</a></li>
-</ul>
-"""
 
-content = """<h2>Pingas</h2>{err}
+content = """<h1>Pingas</h1>{err}
 <table>
 <tr>
 <td style="width: 50%; padding-right: 8px">
@@ -122,14 +114,19 @@ def handlePage(handler, res, path):
         handler.wfile.write(pagecode.format(sidebar, content.format(cons=log, err=error)))
         handler.wfile.write(handler.getServer().pageComponents["footer"]())'''
         
-        content = """<h2>Server list</h2>
+        sidebar = """<h2>Servers</h2>
+        <ul class="list">"""
+        for k, v in pymcserver.server.run.allServers.iteritems():
+            sidebar += '<li><a href="{0}">{1}</a></li>'.format("/manage/" + k, k)
+        sidebar += """</ul>"""
+        
+        content = """<h1>Server list</h1>
         <table>"""
         for k, v in pymcserver.server.run.allServers.iteritems():
             content += "<tr>"
             content += "<td>{0}</td>".format(k)
             content += "<td>{0}</td>".format(v.isRunning() and '<span style="color: green">Running</span>' or '<span style="color: red">Stopped</span>')
             content += "</tr>"
-            
         content += "</table>"
         
         handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
