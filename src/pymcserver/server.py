@@ -314,6 +314,7 @@ def initServer():
     server.pageHandlers["logout"] = pagelogout
     server.pageHandlers["manage"] = pagemanage
     server.pageHandlers["settings"] = pagesettings
+    server.pageHandlers["new"] = pagenew
     
     # Import all the servers
     run = runner.ServerRunner()
