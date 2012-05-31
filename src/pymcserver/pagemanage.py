@@ -124,7 +124,7 @@ def handlePage(handler, res, path):
         <table>"""
         for k, v in pymcserver.server.run.allServers.iteritems():
             content += "<tr>"
-            content += "<td>{0}</td>".format(k)
+            content += '<td width="120px">{0}</td>'.format(k)
             content += "<td>{0}</td>".format(v.isRunning() and '<span style="color: green">Running</span>' or '<span style="color: red">Stopped</span>')
             content += "</tr>"
         content += "</table>"

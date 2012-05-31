@@ -1,6 +1,6 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import cmds, utils, pagecookie, components, pageresource, \
-    pagelogin, pagemanage, pagelogout, runner
+    pagelogin, pagemanage, pagelogout, runner, pagesettings
 from pymcserver.utils import Session
 import ConfigParser
 import Cookie
@@ -313,6 +313,7 @@ def initServer():
     server.pageHandlers["login"] = pagelogin
     server.pageHandlers["logout"] = pagelogout
     server.pageHandlers["manage"] = pagemanage
+    server.pageHandlers["settings"] = pagesettings
     
     # Import all the servers
     run = runner.ServerRunner()

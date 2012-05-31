@@ -28,7 +28,7 @@ def makeMenuBar(handler):
 <tr>
 <td>
 <ul class="menubarItems">
-<li><a href="#">w** SUCKS</a></li><li><a href="#">PS3 &gt; w**</a></li>
+<li><a href="/manage">Manage</a></li><li><a href="/settings">Settings</a></li>
 </ul>
 </td>
 <td width="180px">
