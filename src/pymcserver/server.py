@@ -1,6 +1,6 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from pymcserver import cmds, utils, pagecookie, components, pageresource, \
-    pagelogin, pagemanage, pagelogout, runner, pagesettings
+    pagelogin, pagemanage, pagelogout, runner, pagesettings, pagenew
 from pymcserver.utils import Session
 import ConfigParser
 import Cookie
@@ -300,7 +300,7 @@ def initServer():
     registerCommand("stop", cmds.stopCommand)
     
     # Setup server
-    server = WebServer("0.0.0.0", conf.getint("web", "port"))
+    server = WebServer(conf.get("web", "listen"), conf.getint("web", "port"))
     
     # Register page components
     server.pageComponents["header"] = components.makeHeader

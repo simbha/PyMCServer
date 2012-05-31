@@ -118,6 +118,7 @@ def handlePage(handler, res, path):
         <ul class="list">"""
         for k, v in pymcserver.server.run.allServers.iteritems():
             sidebar += '<li><a href="{0}">{1}</a></li>'.format("/manage/" + k, k)
+        sidebar += '<li><a href="/new">Create new server</a></li>'
         sidebar += """</ul>"""
         
         content = """<h1>Server list</h1>

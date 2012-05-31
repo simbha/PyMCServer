@@ -26,8 +26,16 @@ body,html {
 }
 
 .centerBox h2 {
-	margin-bottom: 2px;
+	margin-bottom: 8px;
 	font-size: 1.8em;
+}
+
+.centerBox table td {
+	vertical-align: middle;
+}
+
+div.formSeperator {
+	margin: 12px 0px;
 }
 
 .error {
@@ -130,7 +138,7 @@ ul.list li a:hover {
 	font-family: "courier new", monospace;
 }
 
-p.small {
+p.small, span.small {
 	font-size: 12px;
 }
 

@@ -16,6 +16,7 @@ postbox = """<div class="centerBox">
 </tr>
 <tr>
 <td></td><td style="text-align: right"><input type="submit"></input></td>
+</tr>
 </table>
 </form>{0}
 <p class="small" style="margin-top: 48px">PyMCServer version {1} running on {2}.</p>
