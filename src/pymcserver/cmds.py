@@ -20,6 +20,23 @@ def reloadCommand(args):
         reload(v)
         log.info("Reloaded " + v.__name__)
 
-def stopCommand(args):
-    pymcserver.server.log.warning("Stop command is glitchy, yeah threading is hard...")
+def shutdownCommand(args):
+    pymcserver.server.log.warning("Shutdown command is glitchy, yeah threading is hard...")
     pymcserver.server.server.stop()
+
+def startCommand(args):
+    if len(args) < 1:
+        pymcserver.server.log.info("Usage: start <serverid>")
+        return
+    
+    name = args[0]
+    
+    if name in pymcserver.server.run.allServers:
+        srv = pymcserver.server.run.allServers[name]
+        if not srv.isRunning():
+            srv.startServer(None)
+            pymcserver.server.log.info("Started server '%s'." % name)
+        else:
+            pymcserver.server.log.error("'%s' is already running." % name)
+    else:
+        pymcserver.server.log.error("No server named '%s'" % name)

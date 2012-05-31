@@ -297,7 +297,8 @@ def initServer():
     registerCommand("test", cmds.testCommand)
     registerCommand("pingas", cmds.testCommand)
     registerCommand("reload", cmds.reloadCommand)
-    registerCommand("stop", cmds.stopCommand)
+    registerCommand("shutdown", cmds.shutdownCommand)
+    registerCommand("start", cmds.startCommand)
     
     # Setup server
     server = WebServer(conf.get("web", "listen"), conf.getint("web", "port"))
