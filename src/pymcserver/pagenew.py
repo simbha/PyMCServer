@@ -1,3 +1,6 @@
+import os
+import pymcserver
+import runner
 import urlparse
 
 postbox = """<div class="centerBox">
@@ -25,10 +28,12 @@ def handlePage(handler, res, path):
             try:
                 name = parse["serverName"][0]
                 port = parse["port"][0]
-                res.headers["Content-Type"] = "text/plain"
+                pymcserver.server.log.info("Creating server %s..." % name)
+                pymcserver.server.run.allServers[name] = runner.BukkitServer(os.path.join(pymcserver.server.datadir, "servers", name))
+                pymcserver.server.log.info("Created server %s..." % name)
+                res.code = 301
+                res.headers["Location"] = "/manage"
                 res.endHeaders()
-                handler.wfile.write("name: %s\n" % name)
-                handler.wfile.write("port: %s" % port)
             except KeyError:
                 handler.wfile.write(handler.getServer().pageComponents["header"]())
                 handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
