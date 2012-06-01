@@ -14,8 +14,7 @@ pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top
 </table>
 """
 
-
-content = """<h1>Pingas</h1>{err}
+content = """<h1>{serverName}</h1>{err}
 <table>
 <tr>
 <td style="width: 50%; padding-right: 8px">
@@ -60,9 +59,38 @@ window.onload = onLoad
 """
 
 def handlePage(handler, res, path):
+    # Sidebar
+    sidebar = """<h2>Servers</h2>
+    <ul class="list">"""
+    for k, v in pymcserver.server.run.allServers.iteritems():
+        sidebar += '<li><a href="{0}">{1}</a></li>'.format("/manage/" + k, k)
+    sidebar += '<li><a href="/new">Create new server</a></li>'
+    sidebar += """</ul>"""
+    
+    # Get server name from URL
+    split = path.split("/")
+    sName = len(split) >= 2 and split[1] or None
+    
     if path == "/":
+        # Server list content
+        li = """<h1>Server list</h1>
+        <table>"""
+        for k, v in pymcserver.server.run.allServers.iteritems():
+            li += "<tr>"
+            li += '<td width="120px">{0}</td>'.format(k)
+            li += "<td>{0}</td>".format(v.isRunning() and '<span style="color: green">Running</span>' or '<span style="color: red">Stopped</span>')
+            li += "</tr>"
+        li += "</table>"
+        
+        handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
+        handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+        handler.wfile.write(pagecode.format(sidebar, li))
+        handler.wfile.write(handler.getServer().pageComponents["footer"]())
+        
+    elif sName != None:
         error = ""
-        '''if handler.command == "POST":
+        
+        if handler.command == "POST":
             parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
             
             try:
@@ -107,30 +135,8 @@ def handlePage(handler, res, path):
             
         handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
         handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
-        handler.wfile.write(pagecode.format(sidebar, content.format(cons=log, err=error)))
-        handler.wfile.write(handler.getServer().pageComponents["footer"]())'''
-        
-        sidebar = """<h2>Servers</h2>
-        <ul class="list">"""
-        for k, v in pymcserver.server.run.allServers.iteritems():
-            sidebar += '<li><a href="{0}">{1}</a></li>'.format("/manage/" + k, k)
-        sidebar += '<li><a href="/new">Create new server</a></li>'
-        sidebar += """</ul>"""
-        
-        content = """<h1>Server list</h1>
-        <table>"""
-        for k, v in pymcserver.server.run.allServers.iteritems():
-            content += "<tr>"
-            content += '<td width="120px">{0}</td>'.format(k)
-            content += "<td>{0}</td>".format(v.isRunning() and '<span style="color: green">Running</span>' or '<span style="color: red">Stopped</span>')
-            content += "</tr>"
-        content += "</table>"
-        
-        handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
-        handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
-        handler.wfile.write(pagecode.format(sidebar, content))
+        handler.wfile.write(pagecode.format(sidebar, content.format(serverName=sName, cons=log, err=error)))
         handler.wfile.write(handler.getServer().pageComponents["footer"]())
-        
     else:
         res.code = 404
         handler.sendErrorPage(res)
