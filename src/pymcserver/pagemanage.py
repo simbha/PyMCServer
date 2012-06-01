@@ -88,16 +88,28 @@ def handlePage(handler, res, path):
         handler.wfile.write(handler.getServer().pageComponents["footer"]())
         
     elif sName != None:
+        # Check to make sure the server exists
+        if not (sName in pymcserver.server.run.allServers):
+            res.code = 404
+            handler.sendErrorPage(res)
+            return
+        
         error = ""
         
         if handler.command == "POST":
             parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
             
             try:
-                server = pymcserver.server.run.allServers["server1"]
+                server = pymcserver.server.run.allServers[sName]
                 if "startServer" in parse:
                     if not server.isRunning():
                         server.startServer(None)
+                        # Really stupid hack to get chrome on windows to prevent it from being
+                        # stuck at loading the page.
+                        res.code = 301
+                        res.headers["Location"] = "/manage/%s" % sName
+                        res.endHeaders()
+                        return
                     else:
                         error = "Server is already running."
                 elif "stopServer" in parse:
@@ -129,7 +141,7 @@ def handlePage(handler, res, path):
         res.endHeaders()
             
         try:
-            log = cgi.escape(utils.tail(open(os.path.join(pymcserver.server.run.allServers["server1"].getPath(), "server.log"))))
+            log = cgi.escape(utils.tail(open(os.path.join(pymcserver.server.run.allServers[sName].getPath(), "server.log"))))
         except:
             log = ""
             
