@@ -59,10 +59,6 @@ window.onload = onLoad
 </script>
 """
 
-#pagecode = """
-#<div style="background: green; min-height: 100%">w** SUCKS
-#</div>"""
-
 def handlePage(handler, res, path):
     if path == "/":
         error = ""

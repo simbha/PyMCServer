@@ -31,8 +31,11 @@ def makeMenuBar(handler):
 <li><a href="/manage">Manage</a></li><li><a href="/settings">Settings</a></li>
 </ul>
 </td>
+<td width="156px">
+v{version}
+</td>
 <td width="180px">
-Logged in as: {0}
+Logged in as: {user}
 </td>
 <td width="64px">
 <a class="menuButton" href="/logout">Log out</a>
@@ -41,4 +44,4 @@ Logged in as: {0}
 </table>
 </div>"""
 
-    return comp.format(handler.getSession().user)
+    return comp.format(version=pymcserver.utils.getVersion(), user=handler.getSession().user)
