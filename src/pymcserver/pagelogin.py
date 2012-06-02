@@ -15,7 +15,7 @@ postbox = """<div class="centerBox">
 <td>Password:</td><td><input type="password" name="password"></td>
 </tr>
 <tr>
-<td></td><td style="text-align: right"><input type="submit"></input></td>
+<td></td><td style="text-align: right"><input type="submit"></td>
 </tr>
 </table>
 </form>{0}

@@ -12,7 +12,7 @@ postbox = """<div class="centerBox">
 <tr><td><div class="formSeperator"></div></td></tr>
 <tr><td>Port:</td><td><input type="text" name="port" value="25565"></td></tr>
 <tr><td><div class="formSeperator"></div></td></tr>
-<tr><td></td><td style="text-align: right"><input type="submit"></input></td></tr>
+<tr><td></td><td style="text-align: right"><input type="submit"></td></tr>
 </table>
 """
 

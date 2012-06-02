@@ -25,8 +25,8 @@ content = """<h1>{serverName}</h1>{err}
     <table>
     <tr>
     <td style="vertical-align: middle; padding-right: 8px">Command:</td>
-    <td style="width: 100%"><input name="command" type="text" id="commandEntry" style="width: 100%"></td>
-    <td style="padding-left: 12px"><input type="submit" value="Send"></input></td>
+    <td style="width: 100%"><input name="command" type="text" id="commandEntry" style="width: 100%" autocomplete="off"></td>
+    <td style="padding-left: 12px"><input type="submit" value="Send"></td>
     </tr>
     </table>
     </form>
