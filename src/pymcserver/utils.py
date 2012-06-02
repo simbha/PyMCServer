@@ -3,7 +3,7 @@ import os
 import time
 
 curversion = None
-VERSION = "0.1"
+VERSION = "0.2"
 
 class Session:
     def __init__(self):

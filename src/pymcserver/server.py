@@ -250,6 +250,18 @@ def initServer():
     configdir = os.path.join(datadir, "config")
     utils.mkdir(configdir)
     
+    # Setup console/file logging
+    sh = logging.StreamHandler()
+    sh.setLevel(logging.DEBUG)
+    sh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+    fh = logging.FileHandler(os.path.join(datadir, "webserver.log"))
+    fh.setLevel(logging.DEBUG)
+    fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+    log.setLevel(logging.DEBUG)
+    log.addHandler(sh)
+    log.addHandler(fh)
+    log.info("Starting PyMCServer, version " + utils.getVersion())
+    
     # Setup user list
     users = os.path.join(configdir, "users.txt")
     if not os.path.exists(users):
@@ -265,18 +277,6 @@ def initServer():
             conf.readfp(fi)
     with open(confpath, "w") as fi:
         conf.write(fi)
-    
-    # Setup console/file logging
-    sh = logging.StreamHandler()
-    sh.setLevel(logging.DEBUG)
-    sh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
-    fh = logging.FileHandler(os.path.join(datadir, "webserver.log"))
-    fh.setLevel(logging.DEBUG)
-    fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
-    log.setLevel(logging.DEBUG)
-    log.addHandler(sh)
-    log.addHandler(fh)
-    log.info("Starting PyMCServer, version " + utils.getVersion())
     
     # Import readline, if available
     try:
