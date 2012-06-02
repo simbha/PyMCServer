@@ -36,8 +36,8 @@ prompt/terminal to start PyMCServer.
 
 Notices
 ------------
-#1: Internet Explorer 9 does not even load the login page on our tests, so you
+1. Internet Explorer 9 does not even load the login page on our tests, so you
 should use something else if the same thing happens to you.
 
-#2: You can get the readline module for Python to let you have enhanced
+2. You can get the readline module for Python to let you have enhanced
 functionality in the console. This does not apply to the web console.
