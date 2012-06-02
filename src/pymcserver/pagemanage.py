@@ -72,6 +72,9 @@ def handlePage(handler, res, path):
     sName = len(split) >= 2 and split[1] or None
     
     if path == "/":
+        res.code = 200
+        res.endHeaders()
+        
         # Server list content
         li = """<h1>Server list</h1>
         <table>"""
