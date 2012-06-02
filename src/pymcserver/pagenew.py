@@ -19,6 +19,8 @@ postbox = """<div class="centerBox">
 def handlePage(handler, res, path):
     if path == "/":
         if handler.command == "GET":
+            res.code = 200
+            res.endHeaders()
             handler.wfile.write(handler.getServer().pageComponents["header"]())
             handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
             handler.wfile.write(postbox.format(error=""))
@@ -35,6 +37,8 @@ def handlePage(handler, res, path):
                 res.headers["Location"] = "/manage"
                 res.endHeaders()
             except KeyError:
+                res.code = 200
+                res.endHeaders()
                 handler.wfile.write(handler.getServer().pageComponents["header"]())
                 handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
                 handler.wfile.write(postbox.format(error='<p class="error">Some form entries are missing.</p>'))
