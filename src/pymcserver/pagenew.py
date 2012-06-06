@@ -34,6 +34,8 @@ def handlePage(handler, res, path):
                 port = parse["port"][0]
                 if not name.isalnum():
                     raise Exception("Name isn't alphanumeric.")
+                if name in pymcserver.server.run.allServers:
+                    raise Exception("There is already a server named '%s'" % name)
                 
                 pymcserver.server.log.info("Creating server %s..." % name)
                 pymcserver.server.run.allServers[name] = runner.BukkitServer(os.path.join(pymcserver.server.datadir, "servers", name))
