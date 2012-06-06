@@ -1,3 +1,4 @@
+from pymcserver import utils
 import os
 import pymcserver
 import runner
@@ -11,6 +12,7 @@ postbox = """<div class="centerBox">
 <tr><td></td><td><span class="small">Server name must be alphanumeric.</span><td></tr>
 <tr><td><div class="formSeperator"></div></td></tr>
 <tr><td>Port:</td><td><input type="text" name="port" value="25565"></td></tr>
+<tr><td></td><td><span class="small">This doesn't work actually...</span><td></tr>
 <tr><td><div class="formSeperator"></div></td></tr>
 <tr><td></td><td style="text-align: right"><input type="submit"></td></tr>
 </table>
@@ -30,6 +32,9 @@ def handlePage(handler, res, path):
             try:
                 name = parse["serverName"][0]
                 port = parse["port"][0]
+                if not name.isalnum():
+                    raise Exception("Name isn't alphanumeric.")
+                
                 pymcserver.server.log.info("Creating server %s..." % name)
                 pymcserver.server.run.allServers[name] = runner.BukkitServer(os.path.join(pymcserver.server.datadir, "servers", name))
                 pymcserver.server.log.info("Created server %s..." % name)
@@ -42,6 +47,11 @@ def handlePage(handler, res, path):
                 handler.wfile.write(handler.getServer().pageComponents["header"]())
                 handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
                 handler.wfile.write(postbox.format(error='<p class="error">Some form entries are missing.</p>'))
+                handler.wfile.write(handler.getServer().pageComponents["footer"]())
+            except Exception, e:
+                handler.wfile.write(handler.getServer().pageComponents["header"]())
+                handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+                handler.wfile.write(postbox.format(error='<p class="error">%s</p>' % utils.escape(e.message)))
                 handler.wfile.write(handler.getServer().pageComponents["footer"]())
     else:
         res.code = 404

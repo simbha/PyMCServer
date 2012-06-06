@@ -1,5 +1,6 @@
-import subprocess
+import cgi
 import os
+import subprocess
 import time
 
 curversion = None
@@ -24,12 +25,12 @@ def tail(f, window=20):
     while size > 0 and numbytes > 0:
         if (numbytes - BUFSIZ > 0):
             # Seek back one whole BUFSIZ
-            f.seek(block*BUFSIZ, 2)
+            f.seek(block * BUFSIZ, 2)
             # read BUFFER
             data.append(f.read(BUFSIZ))
         else:
             # file too small, start from begining
-            f.seek(0,0)
+            f.seek(0, 0)
             # only read what was not read
             data.append(f.read(numbytes))
         linesFound = data[-1].count('\n')
@@ -38,12 +39,15 @@ def tail(f, window=20):
         block -= 1
     return '\n'.join(''.join(data).splitlines()[-window:])
 
+def escape(string):
+    return cgi.escape(string)
+
 def getVersion():
     global curversion
     
     if not curversion:
         try:
-            com = subprocess.Popen(["git", "describe", "--tags"], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+            com = subprocess.Popen(["git", "describe", "--tags"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = com.stdout.readline().rstrip("\n")
             com.wait()
             
