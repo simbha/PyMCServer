@@ -70,10 +70,12 @@ def handlePage(handler, res, path):
                 
                 if isAuthorized(u, p):
                     handler.getSession().user = u
+                    utils.logAction(handler, "(%s) logged in to PyMCServer." % handler.client_address[0])
                     res.code = 301
                     res.headers["Location"] = "/manage"
                     res.endHeaders()
                 else:
+                    utils.logAction(handler, "(%s) failed to log in to PyMCServer." % handler.client_address[0])
                     res.code = 200
                     res.endHeaders()
                     err = "\n<p class=\"error\">Username/password not correct.</p>"

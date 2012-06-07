@@ -1,5 +1,4 @@
 from pymcserver import utils
-import cgi
 import os
 import pymcserver
 import time
@@ -129,6 +128,7 @@ def handlePage(handler, res, path):
                     if server.isRunning():
                         com = parse["command"][0]
                         server.sendCommand(com)
+                        utils.logAction(handler, "sent command %s" % com, sName)
                         time.sleep(1) # PINGAS!
                     else:
                         error = "The server is not running."
@@ -144,7 +144,7 @@ def handlePage(handler, res, path):
         res.endHeaders()
             
         try:
-            log = cgi.escape(utils.tail(open(os.path.join(pymcserver.server.run.allServers[sName].getPath(), "server.log"))))
+            log = utils.escape(utils.tail(open(os.path.join(pymcserver.server.run.allServers[sName].getPath(), "server.log"))))
         except:
             log = ""
             

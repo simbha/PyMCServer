@@ -1,5 +1,6 @@
 import cgi
 import os
+import pymcserver
 import subprocess
 import time
 
@@ -41,6 +42,16 @@ def tail(f, window=20):
 
 def escape(string):
     return cgi.escape(string)
+
+def logAction(handler, message, serverName=None):
+    sess = handler.getSession()
+    if serverName == None:
+        info = "{0} {1}"
+        pymcserver.server.log.info(info.format(sess.user, message))
+    else:
+        info = "{0} (on {1}) {2}"
+        pymcserver.server.log.info(info.format(sess.user, serverName, message))
+        
 
 def getVersion():
     global curversion

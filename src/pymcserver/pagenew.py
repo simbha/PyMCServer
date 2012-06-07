@@ -37,7 +37,7 @@ def handlePage(handler, res, path):
                 if name in pymcserver.server.run.allServers:
                     raise Exception("There is already a server named '%s'" % name)
                 
-                pymcserver.server.log.info("Creating server %s..." % name)
+                utils.logAction(handler, "created a new server called %s." % name)
                 pymcserver.server.run.allServers[name] = runner.BukkitServer(os.path.join(pymcserver.server.datadir, "servers", name))
                 pymcserver.server.log.info("Created server %s..." % name)
                 res.code = 301
