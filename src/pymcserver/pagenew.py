@@ -16,6 +16,8 @@ postbox = """<div class="centerBox">
 <tr><td><div class="formSeperator"></div></td></tr>
 <tr><td></td><td style="text-align: right"><input type="submit"></td></tr>
 </table>
+</form>
+</div>
 """
 
 def handlePage(handler, res, path):
