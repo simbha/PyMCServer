@@ -329,7 +329,7 @@ def initServer():
             log.info("Loaded server '%s'" % i)
     
     log.info("Done (%ss)!" % str(round(time.time() - startTime, 2)))
-    log.info("The URL is: http://%s:%s" % (server.hostname, conf.get("web", "port")))
+    log.info("The URL is: http://%s:%s" % ("localhost", conf.get("web", "port")))
     log.info("Try 'admin' as user and 'w**SUCKS' as the password.")
     
     # Create console handler
