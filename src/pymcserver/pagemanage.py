@@ -19,7 +19,7 @@ content = """<h1>{serverName}</h1>{err}
 <td style="width: 50%; padding-right: 8px">
     <h2>Console</h2>
     <form method="POST">
-    <pre style="width: 100%; font-size: 8px; overflow-x: auto">{cons}
+    <pre id="consoleLog" style="width: 100%; font-size: 8px; overflow-x: auto">{cons}
     </pre>
     <table>
     <tr>
@@ -49,11 +49,29 @@ content = """<h1>{serverName}</h1>{err}
 """
 
 script = """<script type="text/javascript">
+var xmlhttp = new XMLHttpRequest();
 function onLoad()
 {
     document.getElementById("commandEntry").focus();
+    setInterval(updateConsole, 1000);
+    xmlhttp.onreadystatechange = onStateChanged;
 }
-window.onload = onLoad
+
+function onStateChanged()
+{
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+    {
+        document.getElementById("consoleLog").innerHTML = xmlhttp.responseText;
+    }
+}
+
+function updateConsole()
+{
+    // yeah hardcoded...
+    xmlhttp.open("GET", "/api/server1/console", true);
+    xmlhttp.send()
+}
+window.onload = onLoad;
 </script>
 """
 
@@ -84,7 +102,7 @@ def handlePage(handler, res, path):
             li += "</tr>"
         li += "</table>"
         
-        handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
+        handler.wfile.write(handler.getServer().pageComponents["header"]())
         handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
         handler.wfile.write(pagecode.format(sidebar, li))
         handler.wfile.write(handler.getServer().pageComponents["footer"]())

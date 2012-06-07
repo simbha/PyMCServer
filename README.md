@@ -9,7 +9,6 @@ Note that PyMCServer is in **ALPHA**. It is unfinished and bugs are everywhere.
 
 Pre-run
 ------------
-
 Be sure you have Python installed. On Windows, you can go to http://python.org
 to get it. Get the latest 2.x version, not 3.x. Be sure you take note of where
 you install it. Then, follow the first answer to this question:
@@ -30,7 +29,6 @@ open. Don't close it, or else PyMCServer will stop working.
 
 Linux
 -----
-
 PyMCServer requires no installation. Simply run `python start.py` in a command
 prompt/terminal to start PyMCServer.
 
