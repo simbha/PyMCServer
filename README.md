@@ -13,9 +13,6 @@ Features
   * Run multiple servers at once!
   * Supports running CraftBukkit servers.
 
-Installation
-========
-
 Pre-run
 ------------
 Be sure you have Python installed. On Windows, you can go to http://python.org
