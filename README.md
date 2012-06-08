@@ -7,6 +7,15 @@ lightweight, much more so than even the Minecraft server software itself.
 
 Note that PyMCServer is in **ALPHA**. It is unfinished and bugs are everywhere.
 
+Features
+--------
+  * No installation required! Simply run `start.py` to start PyMCServer!
+  * Run multiple servers at once!
+  * Supports running CraftBukkit servers.
+
+Installation
+========
+
 Pre-run
 ------------
 Be sure you have Python installed. On Windows, you can go to http://python.org
