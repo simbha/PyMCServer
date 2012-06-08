@@ -19,8 +19,7 @@ content = """<h1>{serverName}</h1>{err}
 <td style="width: 50%; padding-right: 8px">
     <h2>Console</h2>
     <form method="POST">
-    <pre id="consoleLog" style="width: 100%; font-size: 8px; overflow-x: auto">{cons}
-    </pre>
+    <pre id="consoleLog" style="width: 100%; font-size: 8px; overflow-x: auto">{cons}</pre>
     <table>
     <tr>
     <td style="vertical-align: middle; padding-right: 8px">Command:</td>
@@ -50,6 +49,8 @@ content = """<h1>{serverName}</h1>{err}
 
 script = """<script type="text/javascript">
 var xmlhttp = new XMLHttpRequest();
+var sName = '%s';
+
 function onLoad()
 {
     document.getElementById("commandEntry").focus();
@@ -67,10 +68,10 @@ function onStateChanged()
 
 function updateConsole()
 {
-    // yeah hardcoded...
-    xmlhttp.open("GET", "/api/server1/console", true);
+    xmlhttp.open("GET", "/api/" + sName + "/console", true);
     xmlhttp.send()
 }
+
 window.onload = onLoad;
 </script>
 """
@@ -166,7 +167,7 @@ def handlePage(handler, res, path):
         except:
             log = ""
             
-        handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script))
+        handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script % sName))
         handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
         handler.wfile.write(pagecode.format(sidebar, content.format(serverName=sName, cons=log, err=error)))
         handler.wfile.write(handler.getServer().pageComponents["footer"]())

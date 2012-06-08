@@ -80,7 +80,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
             cookie["session"] = sessid
             cookie["session"]["Path"] = "/"
             
-            res.headers["Set-Cookie"] = cookie.output(header = "")
+            res.headers["Set-Cookie"] = cookie.output(header="")
         else:
             # If session is valid, update the last visited time
             self.getSession(sessid).time = time.time()
@@ -112,6 +112,14 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         
         # Send client to login page if not logged in.
         session = self.getSession(sessid)
+        
+        # Special case for /api, do not redirect, send a 403 instead.
+        if mod == "api" and not session.user:
+            res.code = 403
+            res.endHeaders()
+            return
+        
+        # Send client to login page for everything else
         if not (path == "/" or mod == "res" or mod == "login" or mod == "cookies") and not session.user:
             res.code = 301
             res.headers["Location"] = "/login"
@@ -129,7 +137,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         if not handled:
             self.sendErrorPage(res)
         
-    def getSession(self, sessid = None):
+    def getSession(self, sessid=None):
         """if sessid == None:
             if "Cookie" in self.headers:
                 c = Cookie.SimpleCookie(self.headers["Cookie"])
@@ -156,7 +164,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         global server
         return server
     
-    def sendErrorPage(self, res, message = None):
+    def sendErrorPage(self, res, message=None):
         self.send_response(res.code)
         for key, value in res.headers.iteritems():
             self.send_header(key, value)
