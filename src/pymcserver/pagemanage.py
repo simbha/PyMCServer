@@ -148,7 +148,6 @@ def handlePage(handler, res, path):
                         com = parse["command"][0]
                         server.sendCommand(com)
                         utils.logAction(handler, "sent command %s" % com, sName)
-                        time.sleep(1) # PINGAS!
                     else:
                         error = "The server is not running."
                     
