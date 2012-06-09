@@ -1,7 +1,6 @@
 from pymcserver import utils
 import os
 import pymcserver
-import time
 import traceback
 import urlparse
 
