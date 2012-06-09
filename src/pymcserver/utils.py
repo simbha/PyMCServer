@@ -5,7 +5,7 @@ import subprocess
 import time
 
 curversion = None
-VERSION = "0.2"
+VERSION = "0.3"
 
 class Session:
     def __init__(self):
