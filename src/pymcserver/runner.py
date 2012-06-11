@@ -4,6 +4,8 @@ import subprocess
 import time
 import urllib
 
+FNULL = open(os.devnull, "wb")
+
 class ServerRunner():
     def __init__(self):
         self.allServers = {}
@@ -71,7 +73,7 @@ class BukkitServer(BaseServer):
         if not os.path.exists(os.path.join(self.path, "craftbukkit.jar")):
             self.downloadServer()
             
-        self.serverThread = subprocess.Popen(["java", "-jar", "craftbukkit.jar", "--nojline"], stdin=subprocess.PIPE, cwd=self.path)
+        self.serverThread = subprocess.Popen(["java", "-jar", "craftbukkit.jar", "--nojline"], stdin=subprocess.PIPE, stdout=FNULL, stderr=FNULL, cwd=self.path)
     
     def stopServer(self):
         if not self.isRunning():
