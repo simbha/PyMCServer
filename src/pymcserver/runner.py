@@ -10,6 +10,7 @@ class ServerRunner():
     def __init__(self):
         self.allServers = {}
 
+# Every server object must inherit from this
 class BaseServer(object):
     def downloadServer(self):
         raise NotImplementedError()
@@ -32,7 +33,7 @@ class BaseServer(object):
     def sendCommand(self, command):
         raise NotImplementedError()
 
-# The stock MC server...
+# The stock MC server, almost pointless and easily become griefed.
 class StockServer(BaseServer):
     def __init__(self, path):
         self.path = path
@@ -73,7 +74,8 @@ class StockServer(BaseServer):
             return
         
         self.serverThread.kill()
-    
+
+# Every MC server must be this...
 class BukkitServer(StockServer):
     def __init__(self, path):
         super(BukkitServer, self).__init__(path)

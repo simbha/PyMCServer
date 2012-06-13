@@ -1,5 +1,6 @@
-import urlparse
+from pymcserver import components
 import hashlib
+import urlparse
 
 pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top: 28px">
 <tr>
@@ -36,10 +37,10 @@ usersPage = """<h1>Change Password</h1>{err}
 def handlePage(handler, res, path):
     if path == "/":
         res.endHeaders()
-        handler.wfile.write(handler.getServer().pageComponents["header"]())
-        handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+        handler.wfile.write(components.makeHeader())
+        handler.wfile.write(components.makeMenuBar(handler))
         handler.wfile.write(pagecode.format(sidebar, "<h1>Settings</h1>\n<p>Click on a setting on the sidebar.</p>"))
-        handler.wfile.write(handler.getServer().pageComponents["footer"]())
+        handler.wfile.write(components.makeFooter())
     elif path == "/pass":
         error = ""
         if handler.command == "POST":
@@ -59,20 +60,20 @@ def handlePage(handler, res, path):
             
         res.code = 200
         res.endHeaders()
-        handler.wfile.write(handler.getServer().pageComponents["header"]())
-        handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+        handler.wfile.write(components.makeHeader())
+        handler.wfile.write(components.makeMenuBar(handler))
         handler.wfile.write(pagecode.format(sidebar, usersPage.format(err=error and "<p class=\"error\">%s</p>" % error or "")))
-        handler.wfile.write(handler.getServer().pageComponents["footer"]())
+        handler.wfile.write(components.makeFooter())
     elif path == "/console":
         res.code = 404
         handler.sendErrorPage(res)
     elif path == "/about":
         res.code = 200
         res.endHeaders()
-        handler.wfile.write(handler.getServer().pageComponents["header"]())
-        handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+        handler.wfile.write(components.makeHeader())
+        handler.wfile.write(components.makeMenuBar(handler))
         handler.wfile.write(pagecode.format(sidebar, about))
-        handler.wfile.write(handler.getServer().pageComponents["footer"]())
+        handler.wfile.write(components.makeFooter())
     else:
         res.code = 404
         handler.sendErrorPage(res)
