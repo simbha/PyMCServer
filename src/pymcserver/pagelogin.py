@@ -1,4 +1,4 @@
-from pymcserver import utils
+from pymcserver import utils, components
 import hashlib
 import os
 import pymcserver
@@ -49,9 +49,9 @@ def handlePage(handler, res, path):
             if handler.command == "GET":
                 res.code = 200
                 res.endHeaders()
-                handler.wfile.write(handler.getServer().pageComponents["header"]())
+                handler.wfile.write(components.makeHeader())
                 handler.wfile.write(postbox.format("", utils.getVersion(), handler.getServer().hostname))
-                handler.wfile.write(handler.getServer().pageComponents["footer"]())
+                handler.wfile.write(components.makeFooter())
             if handler.command == "POST":
                 parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
                 
@@ -63,9 +63,9 @@ def handlePage(handler, res, path):
                     res.endHeaders()
                     err = "\n<p class=\"error\">Missing username/password.</p>"
                     
-                    handler.wfile.write(handler.getServer().pageComponents["header"]())
+                    handler.wfile.write(components.makeHeader())
                     handler.wfile.write(postbox.format(err, utils.getVersion(), handler.getServer().hostname))
-                    handler.wfile.write(handler.getServer().pageComponents["footer"]())
+                    handler.wfile.write(components.makeFooter())
                     return
                 
                 if isAuthorized(u, p):
@@ -80,9 +80,9 @@ def handlePage(handler, res, path):
                     res.endHeaders()
                     err = "\n<p class=\"error\">Username/password not correct.</p>"
                     
-                    handler.wfile.write(handler.getServer().pageComponents["header"]())
+                    handler.wfile.write(components.makeHeader())
                     handler.wfile.write(postbox.format(err, utils.getVersion(), handler.getServer().hostname))
-                    handler.wfile.write(handler.getServer().pageComponents["footer"]())
+                    handler.wfile.write(components.makeFooter())
                     return
     else:
         res.code = 404

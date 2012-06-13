@@ -1,4 +1,4 @@
-from pymcserver import utils
+from pymcserver import utils, components
 import os
 import pymcserver
 import traceback
@@ -109,10 +109,10 @@ def handlePage(handler, res, path):
             li += "</tr>"
         li += "</table>"
         
-        handler.wfile.write(handler.getServer().pageComponents["header"]())
-        handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+        handler.wfile.write(components.makeHeader())
+        handler.wfile.write(components.makeMenuBar(handler))
         handler.wfile.write(pagecode.format(sidebar, li))
-        handler.wfile.write(handler.getServer().pageComponents["footer"]())
+        handler.wfile.write(components.makeFooter())
         
     elif sName != None:
         # Check to make sure the server exists
@@ -172,17 +172,17 @@ def handlePage(handler, res, path):
             except:
                 log = ""
                 
-            handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script % sName))
-            handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+            handler.wfile.write(components.makeHeader(extraHead=script % sName))
+            handler.wfile.write(components.makeMenuBar(handler))
             handler.wfile.write(pagecode.format(sidebar, content.format(serverName=sName, cons=log, err=error)))
-            handler.wfile.write(handler.getServer().pageComponents["footer"]())
+            handler.wfile.write(components.makeFooter())
         elif sAction == "settings":
             res.code = 200
             res.endHeaders()
-            handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script % sName))
-            handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+            handler.wfile.write(components.makeHeader(extraHead=script % sName))
+            handler.wfile.write(components.makeMenuBar(handler))
             handler.wfile.write(pagecode.format(sidebar, "Nothing yet..."))
-            handler.wfile.write(handler.getServer().pageComponents["footer"]())
+            handler.wfile.write(components.makeFooter())
         else:
             res.code = 404
             handler.sendErrorPage(res)
