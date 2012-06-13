@@ -12,7 +12,6 @@ import sys
 import threading
 import time
 import uuid
-from inspect import Traceback
 import traceback
 
 server = None
@@ -20,7 +19,6 @@ run = None
 log = logging.getLogger("PyMCServer")
 accesslog = logging.getLogger("WebAccess")
 datadir = "data"
-active = True
 
 _allCommands = {}
 
@@ -185,7 +183,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
 </div>
 """ % (res.code,
        allErrors.get(res.code, ("Unknown error"))[0],
-       allErrors.get(res.code, (None, "Unknown description"))[1],
+       allErrors.get(res.code, (None, "Unknown description."))[1],
        msg,
        utils.getVersion(),
        server.hostname))
