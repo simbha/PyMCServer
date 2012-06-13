@@ -7,6 +7,8 @@ lightweight, much more so than even the Minecraft server software itself.
 
 Note that PyMCServer is in **ALPHA**. It is unfinished and bugs are everywhere.
 
+See the FAQ: https://github.com/a646767/PyMCServer/wiki/FAQ
+
 Features
 --------
   * No installation required! Simply run `start.py` to start PyMCServer!
