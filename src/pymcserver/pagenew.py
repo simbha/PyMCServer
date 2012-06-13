@@ -25,10 +25,10 @@ def handlePage(handler, res, path):
         if handler.command == "GET":
             res.code = 200
             res.endHeaders()
-            handler.wfile.write(handler.getServer().pageComponents["header"]())
-            handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+            handler.wfile.write(components.makeHeader())
+            handler.wfile.write(components.makeMenuBar(handler))
             handler.wfile.write(postbox.format(error=""))
-            handler.wfile.write(handler.getServer().pageComponents["footer"]())
+            handler.wfile.write(components.makeFooter())
         elif handler.command == "POST":
             parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
             try:
@@ -48,15 +48,15 @@ def handlePage(handler, res, path):
             except KeyError:
                 res.code = 200
                 res.endHeaders()
-                handler.wfile.write(handler.getServer().pageComponents["header"]())
-                handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+                handler.wfile.write(components.makeHeader())
+                handler.wfile.write(components.makeMenuBar(handler))
                 handler.wfile.write(postbox.format(error='<p class="error">Some form entries are missing.</p>'))
-                handler.wfile.write(handler.getServer().pageComponents["footer"]())
+                handler.wfile.write(components.makeFooter())
             except Exception, e:
-                handler.wfile.write(handler.getServer().pageComponents["header"]())
-                handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+                handler.wfile.write(components.makeHeader())
+                handler.wfile.write(components.makeMenuBar(handler))
                 handler.wfile.write(postbox.format(error='<p class="error">%s</p>' % utils.escape(e.message)))
-                handler.wfile.write(handler.getServer().pageComponents["footer"]())
+                handler.wfile.write(components.makeFooter())
     else:
         res.code = 404
         handler.sendErrorPage(res)
