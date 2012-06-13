@@ -76,6 +76,11 @@ window.onload = onLoad;
 """
 
 def handlePage(handler, res, path):
+    # Parse URL
+    split = path.split("/")
+    sName = len(split) >= 2 and split[1] or None
+    sAction = len(split) >= 3 and split[2] or None
+    
     # Sidebar
     sidebar = """<h2>Servers</h2>
     <ul class="list">"""
@@ -83,10 +88,12 @@ def handlePage(handler, res, path):
         sidebar += '<li><a href="{0}">{1}</a></li>'.format("/manage/" + k, k)
     sidebar += '<li><a href="/new">Create new server</a></li>'
     sidebar += """</ul>"""
-    
-    # Get server name from URL
-    split = path.split("/")
-    sName = len(split) >= 2 and split[1] or None
+    if sName:
+        sidebar += """<h2 style="margin-top: 96px">{0}</h2>
+<ul class="list">
+<li><a href="/manage/{0}/console">Console</a></li>
+<li><a href="/manage/{0}/settings">Settings</a></li>
+</ul>""".format(sName)
     
     if path == "/":
         res.code = 200
@@ -114,61 +121,71 @@ def handlePage(handler, res, path):
             handler.sendErrorPage(res)
             return
         
-        error = ""
-        
-        if handler.command == "POST":
-            parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
-            
+        if sAction == None:
+            error = ""
+            if handler.command == "POST":
+                parse = urlparse.parse_qs(handler.rfile.read(int(handler.headers["Content-Length"])))
+                
+                try:
+                    server = pymcserver.server.run.allServers[sName]
+                    if "startServer" in parse:
+                        if not server.isRunning():
+                            server.startServer(None)
+                            # Really stupid hack to get chrome on windows to prevent it from being
+                            # stuck at loading the page.
+                            res.code = 301
+                            res.headers["Location"] = "/manage/%s" % sName
+                            res.endHeaders()
+                            return
+                        else:
+                            error = "Server is already running."
+                    elif "stopServer" in parse:
+                        if server.isRunning():
+                            server.stopServer()
+                        else:
+                            error = "Server is already stopped."
+                    elif "killServer" in parse:
+                        if server.isRunning():
+                            server.killServer()
+                        else:
+                            error = "Server is already stopped."
+                    elif "command" in parse:
+                        if server.isRunning():
+                            com = parse["command"][0]
+                            server.sendCommand(com)
+                            utils.logAction(handler, "sent command %s" % com, sName)
+                        else:
+                            error = "The server is not running."
+                        
+                    if error:
+                        error = """<p class="error">{0}</p>\n""".format(error)
+                    else:
+                        error = ""
+                except:
+                    traceback.print_exc()
+                
+            res.code = 200
+            res.endHeaders()
+                
             try:
-                server = pymcserver.server.run.allServers[sName]
-                if "startServer" in parse:
-                    if not server.isRunning():
-                        server.startServer(None)
-                        # Really stupid hack to get chrome on windows to prevent it from being
-                        # stuck at loading the page.
-                        res.code = 301
-                        res.headers["Location"] = "/manage/%s" % sName
-                        res.endHeaders()
-                        return
-                    else:
-                        error = "Server is already running."
-                elif "stopServer" in parse:
-                    if server.isRunning():
-                        server.stopServer()
-                    else:
-                        error = "Server is already stopped."
-                elif "killServer" in parse:
-                    if server.isRunning():
-                        server.killServer()
-                    else:
-                        error = "Server is already stopped."
-                elif "command" in parse:
-                    if server.isRunning():
-                        com = parse["command"][0]
-                        server.sendCommand(com)
-                        utils.logAction(handler, "sent command %s" % com, sName)
-                    else:
-                        error = "The server is not running."
-                    
-                if error:
-                    error = """<p class="error">{0}</p>\n""".format(error)
-                else:
-                    error = ""
+                log = utils.escape(utils.tail(open(os.path.join(pymcserver.server.run.allServers[sName].getPath(), "server.log"))))
             except:
-                traceback.print_exc()
-            
-        res.code = 200
-        res.endHeaders()
-            
-        try:
-            log = utils.escape(utils.tail(open(os.path.join(pymcserver.server.run.allServers[sName].getPath(), "server.log"))))
-        except:
-            log = ""
-            
-        handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script % sName))
-        handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
-        handler.wfile.write(pagecode.format(sidebar, content.format(serverName=sName, cons=log, err=error)))
-        handler.wfile.write(handler.getServer().pageComponents["footer"]())
+                log = ""
+                
+            handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script % sName))
+            handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+            handler.wfile.write(pagecode.format(sidebar, content.format(serverName=sName, cons=log, err=error)))
+            handler.wfile.write(handler.getServer().pageComponents["footer"]())
+        elif sAction == "settings":
+            res.code = 200
+            res.endHeaders()
+            handler.wfile.write(handler.getServer().pageComponents["header"](extraHead=script % sName))
+            handler.wfile.write(handler.getServer().pageComponents["menubar"](handler))
+            handler.wfile.write(pagecode.format(sidebar, "Nothing yet..."))
+            handler.wfile.write(handler.getServer().pageComponents["footer"]())
+        else:
+            res.code = 404
+            handler.sendErrorPage(res)
     else:
         res.code = 404
         handler.sendErrorPage(res)

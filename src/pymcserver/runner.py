@@ -31,28 +31,15 @@ class BaseServer(object):
     
     def sendCommand(self, command):
         raise NotImplementedError()
-    
-class BukkitServer(BaseServer):
+
+# The stock MC server...
+class StockServer(BaseServer):
     def __init__(self, path):
         self.path = path
         self.serverThread = None
-        self.__dllasttime = time.time()
         
         if not os.path.exists(self.path):
             os.makedirs(path)
-    
-    def _reportHook(self, bn, bs, size):
-        # Show download progress but only output to the console every second
-        if time.time() - self.__dllasttime > 1:
-            self.__dllasttime = time.time()
-            totalblocks = size / bs
-            dledblocks = bn
-            progress = int((float(dledblocks) / float(totalblocks)) * 100)
-            pymcserver.server.log.info("Downloading craftbukkit.jar... %s%%" % progress)
-        
-    def downloadServer(self):
-        pymcserver.server.log.info("Downloading craftbukkit.jar...")
-        urllib.urlretrieve("http://cbukk.it/craftbukkit.jar", os.path.join(self.path, "craftbukkit.jar"), self._reportHook)
     
     def getPath(self):
         return self.path
@@ -70,10 +57,10 @@ class BukkitServer(BaseServer):
         if self.isRunning():
             return
         
-        if not os.path.exists(os.path.join(self.path, "craftbukkit.jar")):
-            self.downloadServer()
+        if not os.path.exists(os.path.join(self.path, "minecraft_server.jar")):
+            raise RuntimeError
             
-        self.serverThread = subprocess.Popen(["java", "-jar", "craftbukkit.jar", "--nojline"], stdin=subprocess.PIPE, stdout=FNULL, stderr=FNULL, cwd=self.path)
+        self.serverThread = subprocess.Popen(["java", "-jar", "minecraft_server.jar", "nogui"], stdin=subprocess.PIPE, stdout=FNULL, stderr=FNULL, cwd=self.path)
     
     def stopServer(self):
         if not self.isRunning():
@@ -86,3 +73,30 @@ class BukkitServer(BaseServer):
             return
         
         self.serverThread.kill()
+    
+class BukkitServer(StockServer):
+    def __init__(self, path):
+        super(BukkitServer, self).__init__(path)
+        self.__dllasttime = time.time()
+        
+    def _reportHook(self, bn, bs, size):
+        # Show download progress but only output to the console every second
+        if time.time() - self.__dllasttime > 1:
+            self.__dllasttime = time.time()
+            totalblocks = size / bs
+            dledblocks = bn
+            progress = int((float(dledblocks) / float(totalblocks)) * 100)
+            pymcserver.server.log.info("Downloading craftbukkit.jar... %s%%" % progress)
+            
+    def downloadServer(self):
+        pymcserver.server.log.info("Downloading craftbukkit.jar...")
+        urllib.urlretrieve("http://cbukk.it/craftbukkit.jar", os.path.join(self.path, "craftbukkit.jar"), self._reportHook)
+        
+    def startServer(self, args):
+        if self.isRunning():
+            return
+        
+        if not os.path.exists(os.path.join(self.path, "craftbukkit.jar")):
+            self.downloadServer()
+            
+        self.serverThread = subprocess.Popen(["java", "-jar", "craftbukkit.jar", "--nojline"], stdin=subprocess.PIPE, stdout=FNULL, stderr=FNULL, cwd=self.path)
