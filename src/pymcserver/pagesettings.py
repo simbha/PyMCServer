@@ -9,6 +9,7 @@ pagecode = """<table style="border-collapse: collapse; height: 100%; padding-top
 sidebar = """<h2>Settings</h2>
 <ul class="list">
 <li><a href="/settings/users">Users</a></li>
+<li><a href="/settings/console">PyMCServer Console</a></li>
 </ul>"""
 
 def handlePage(handler, res, path):

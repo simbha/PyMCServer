@@ -12,6 +12,8 @@ import sys
 import threading
 import time
 import uuid
+from inspect import Traceback
+import traceback
 
 server = None
 run = None
@@ -46,7 +48,7 @@ class WebServer():
     def stop(self):
         self.running = False
         log.info("Stopping PyMCServer...")
-        self.httpd.socket.close()
+        self.httpd.shutdown()
         
 class MCHTTPRequestHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
@@ -229,22 +231,25 @@ class ConsoleHandlerThread(threading.Thread):
         self.setName("ConsoleHandlerThread")
         
     def run(self):
-        #while server.running:
+        line = raw_input("> ")
         while True:
-            line = raw_input("> ")
-            if line:
-                com = line.split()[0]
-                if _allCommands.has_key(com):
-                    args = line.split()[1:]
-                    _allCommands[com](args)
-                elif com == "help":
-                    log.info("Command list: ")
-                    for i in _allCommands.keys():
-                        log.info("- %s" % i)
-                else:
-                    log.error("Unknown command. Type 'help' for command list")
+            try:
+                if line:
+                    com = line.split()[0]
+                    if _allCommands.has_key(com):
+                        args = line.split()[1:]
+                        _allCommands[com](args)
+                    elif com == "help":
+                        log.info("Command list: ")
+                        for i in _allCommands.keys():
+                            log.info("- %s" % i)
+                    else:
+                        log.error("Unknown command. Type 'help' for command list")
+            except:
+                traceback.print_exc()
             if not server.running:
                 break
+            line = raw_input("> ")
 
 def registerCommand(name, function):
     _allCommands[name] = function
@@ -301,9 +306,7 @@ def initServer():
     accesslog.setLevel(logging.DEBUG)
     accesslog.addHandler(fh)
     
-    # Register commands
-    registerCommand("test", cmds.testCommand)
-    registerCommand("pingas", cmds.testCommand)
+    # Register console commands
     registerCommand("reload", cmds.reloadCommand)
     registerCommand("shutdown", cmds.shutdownCommand)
     registerCommand("start", cmds.startCommand)
@@ -354,7 +357,8 @@ def initServer():
         log.info("EOF from stdin detected.")
     finally:
         # Stop all mc servers
-        for v in run.allServers.itervalues():
+        for k, v in run.allServers.iteritems():
+            log.info("Stopping server '%s'" % k)
             v.stopServer()
             
         # Stop the server if its still running
