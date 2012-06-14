@@ -2,7 +2,7 @@
 import os
 import mimetypes
 
-__RESDIR = "./res"
+__CONTENTDIR = "./content"
 
 def handlePage(handler, res, path):
     """Open a resource, find its mime type and send it."""
@@ -16,9 +16,14 @@ def handlePage(handler, res, path):
     # No need to handle parent directory exploit pingas, because
     # the web server pre-handles that.
     
-    filepath = os.path.join(__RESDIR, path.lstrip("/"))
+    filepath = os.path.join(__CONTENTDIR, path.lstrip("/"))
     
     try:
+        if os.path.isdir(filepath):
+            res.code = 403
+            handler.sendErrorPage(res)
+            return
+            
         # Read the file 4 KB at a time and send it
         with open(filepath, "rb") as f:
             # Get the mime type of the file and set the content type header

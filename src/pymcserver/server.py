@@ -1,5 +1,5 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from pymcserver import cmds, utils, pagecookie, components, pageresource, \
+from pymcserver import cmds, utils, pagecookie, pageresource, \
     pagelogin, pagemanage, pagelogout, runner, pagesettings, pagenew, pageapi
 from pymcserver.utils import Session
 import ConfigParser
@@ -18,7 +18,8 @@ server = None
 run = None
 log = logging.getLogger("PyMCServer")
 accesslog = logging.getLogger("WebAccess")
-datadir = "data"
+DATADIR = "data"
+RESDIR = "res"
 
 _allCommands = {}
 
@@ -57,6 +58,24 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         
     def do_POST(self):
         self.handlePage()
+    
+    def getResource(self, path):
+        '''Get a resource as string'''
+        with self.getResourceFP(path) as f:
+            f.read()
+    
+    def getResourceFP(self, path):
+        '''Get a resource as a file pointer'''
+        return open(os.path.join(RESDIR, path), "rb")
+    
+    def putResource(self, path):
+        '''Place a resource directly into the page'''
+        with self.getResourceFP(path) as f:
+            while True:
+                buf = f.read(4096)
+                if len(buf) == 0:
+                    break
+                self.wfile.write(buf)
     
     def handlePage(self):
         res = Response(self)
@@ -257,15 +276,15 @@ def initServer():
     startTime = time.time()
     
     # Setup data directory
-    utils.mkdir(datadir)
-    configdir = os.path.join(datadir, "config")
+    utils.mkdir(DATADIR)
+    configdir = os.path.join(DATADIR, "config")
     utils.mkdir(configdir)
     
     # Setup console/file logging
     sh = logging.StreamHandler()
     sh.setLevel(logging.DEBUG)
     sh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
-    fh = logging.FileHandler(os.path.join(datadir, "webserver.log"))
+    fh = logging.FileHandler(os.path.join(DATADIR, "webserver.log"))
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
     log.setLevel(logging.DEBUG)
@@ -298,7 +317,7 @@ def initServer():
         pass
     
     # Setup web access.log
-    fh = logging.FileHandler(os.path.join(datadir, "access.log"))
+    fh = logging.FileHandler(os.path.join(DATADIR, "access.log"))
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
     accesslog.setLevel(logging.DEBUG)
@@ -326,9 +345,9 @@ def initServer():
     
     # Import all the servers
     run = runner.ServerRunner()
-    #run.allServers["server1"] = runner.BukkitServer(os.path.join(datadir, "servers", "server1"))
+    #run.allServers["server1"] = runner.BukkitServer(os.path.join(DATADIR, "servers", "server1"))
     
-    serverdir = os.path.join(datadir, "servers")
+    serverdir = os.path.join(DATADIR, "servers")
     for i in os.listdir(serverdir):
         path = os.path.join(serverdir, i)
         if os.path.isdir(path):
