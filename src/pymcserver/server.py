@@ -309,7 +309,7 @@ def initServer():
     registerCommand("reload", cmds.reloadCommand)
     registerCommand("shutdown", cmds.shutdownCommand)
     registerCommand("start", cmds.startCommand)
-    registerCommand("start", cmds.stopCommand)
+    registerCommand("stop", cmds.stopCommand)
     
     # Setup server
     server = WebServer(conf.get("web", "listen"), conf.getint("web", "port"))
