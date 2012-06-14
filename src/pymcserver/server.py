@@ -305,17 +305,14 @@ def initServer():
     accesslog.addHandler(fh)
     
     # Register console commands
+    registerCommand("list", cmds.listCommand)
     registerCommand("reload", cmds.reloadCommand)
     registerCommand("shutdown", cmds.shutdownCommand)
     registerCommand("start", cmds.startCommand)
+    registerCommand("start", cmds.stopCommand)
     
     # Setup server
     server = WebServer(conf.get("web", "listen"), conf.getint("web", "port"))
-    
-    # Register page components
-    server.pageComponents["header"] = components.makeHeader
-    server.pageComponents["footer"] = components.makeFooter
-    server.pageComponents["menubar"] = components.makeMenuBar
     
     # Register page handlers
     server.pageHandlers["api"] = pageapi
