@@ -23,10 +23,10 @@ postbox = """<div class="centerBox">
 """
 
 def isAuthorized(user, pasw):
-    with open(os.path.join(pymcserver.server.datadir, "config", "users.txt")) as f:
+    with open(os.path.join(pymcserver.server.DATADIR, "config", "users.txt")) as f:
         for line in f:
             spl = line.split(":")
-            name = spl[0] # there's a prequel to SPL1? oh no!
+            name = spl[0]
             passhash = spl[1].rstrip()
             
             if user == name:

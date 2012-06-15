@@ -1,6 +1,7 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from pymcserver import cmds, utils, pagecookie, pageresource, \
-    pagelogin, pagemanage, pagelogout, runner, pagesettings, pagenew, pageapi
+from pymcserver import cmds, utils, pagecookie, pageresource, pagelogin, \
+    pagemanage, pagelogout, runner, pagesettings, pagenew, pageapi, components, \
+    pagetest
 from pymcserver.utils import Session
 import ConfigParser
 import Cookie
@@ -11,8 +12,8 @@ import socket
 import sys
 import threading
 import time
-import uuid
 import traceback
+import uuid
 
 server = None
 run = None
@@ -34,7 +35,6 @@ class WebServer():
     def __init__(self, host, port):
         self.httpd = HTTPServer((host, port), MCHTTPRequestHandler)
         self.pageHandlers = {}
-        self.pageComponents = {}
         self.allSessions = {}
         self.hostname = socket.gethostname()
         
@@ -62,7 +62,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
     def getResource(self, path):
         '''Get a resource as string'''
         with self.getResourceFP(path) as f:
-            f.read()
+            return f.read()
     
     def getResourceFP(self, path):
         '''Get a resource as a file pointer'''
@@ -193,7 +193,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
         if message:
             msg = "\n<pre>%s</pre>" % message
         
-        self.wfile.write(server.pageComponents["header"]())
+        self.wfile.write(components.makeHeader())
         self.wfile.write("""<div class="centerBox">
 <h2>%s - %s</h2>
 <p>%s</p>%s
@@ -206,7 +206,7 @@ class MCHTTPRequestHandler(BaseHTTPRequestHandler):
        msg,
        utils.getVersion(),
        server.hostname))
-        self.wfile.write(server.pageComponents["footer"]())
+        self.wfile.write(components.makeFooter())
 
 class Response:
     def __init__(self, handler):
@@ -295,11 +295,11 @@ def initServer():
     # Setup user list
     users = os.path.join(configdir, "users.txt")
     if not os.path.exists(users):
-        shutil.copyfile("res/users.txt", users)
+        shutil.copyfile(os.path.join(RESDIR, "users.txt"), users)
     
     # Setup config file
     conf = ConfigParser.RawConfigParser()
-    conf.read(os.path.join("res", "config.ini"))
+    conf.read(os.path.join(RESDIR, "config.ini"))
     confpath = os.path.join(configdir, "config.ini")
     
     if os.path.exists(confpath):
@@ -342,6 +342,7 @@ def initServer():
     server.pageHandlers["manage"] = pagemanage
     server.pageHandlers["new"] = pagenew
     server.pageHandlers["settings"] = pagesettings
+    server.pageHandlers["test"] = pagetest
     
     # Import all the servers
     run = runner.ServerRunner()
