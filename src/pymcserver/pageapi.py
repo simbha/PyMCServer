@@ -24,8 +24,8 @@ def handlePage(handler, res, path):
     if action == "console":
         res.code = 200
         res.endHeaders()
-        # yeah hardcoded
-        handler.wfile.write(utils.escape(utils.tail(open(os.path.join(server.getPath(), "server.log")))))
+        with server.getLogFP() as f:
+            handler.wfile.write(utils.escape(utils.tail(f)))
     else:
         res.code = 404
         res.endHeaders()

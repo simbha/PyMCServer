@@ -168,7 +168,8 @@ def handlePage(handler, res, path):
             res.endHeaders()
                 
             try:
-                log = utils.escape(utils.tail(open(os.path.join(pymcserver.server.run.allServers[sName].getPath(), "server.log"))))
+                with pymcserver.server.run.allServers[sName].getLogFP() as f:
+                    log = utils.escape(utils.tail(f))
             except:
                 log = ""
                 
