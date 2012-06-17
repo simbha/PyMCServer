@@ -346,7 +346,6 @@ def initServer():
     
     # Import all the servers
     run = runner.ServerRunner()
-    #run.allServers["server1"] = runner.BukkitServer(os.path.join(DATADIR, "servers", "server1"))
     
     serverdir = os.path.join(DATADIR, "servers")
     for i in os.listdir(serverdir):
@@ -354,6 +353,13 @@ def initServer():
         if os.path.isdir(path):
             run.allServers[i] = runner.BukkitServer(path)
             log.info("Loaded server '%s'" % i)
+    
+    # Import extra servers from config.ini
+    if conf.has_section("extraservers"):
+        sec = dict(conf.items("extraservers"))
+        for k, v in sec.iteritems():
+            run.allServers[k] = runner.BukkitServer(v)
+            log.info("Loaded extra server '%s'" % k)
     
     log.info("Done (%ss)!" % str(round(time.time() - startTime, 2)))
     log.info("The URL is: http://%s:%s" % ("localhost", conf.get("web", "port")))

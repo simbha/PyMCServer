@@ -2,7 +2,7 @@
 import os
 import mimetypes
 
-__CONTENTDIR = "./content"
+__CONTENTDIR = "content"
 
 def handlePage(handler, res, path):
     """Open a resource, find its mime type and send it."""
