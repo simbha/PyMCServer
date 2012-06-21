@@ -1,0 +1,9 @@
+ * Let you add Java and Minecraft Server arguments.
+ * A way to delete/remove servers.
+ * Allow you to run stock Minecraft servers.
+ * HTTPS Support, especially for the login page.
+ * A way to assign icons to servers.
+ * A way to restart PyMCServer without restarting the Minecraft servers.
+ * Automatic updating.
+ * An easter egg.
+ * A PyMCServer, Minecraft server and computer uptime counter.
