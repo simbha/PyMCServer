@@ -279,6 +279,8 @@ def initServer():
     utils.mkdir(DATADIR)
     configdir = os.path.join(DATADIR, "config")
     utils.mkdir(configdir)
+    serverdir = os.path.join(DATADIR, "servers")
+    utils.mkdir(serverdir)
     
     # Setup console/file logging
     sh = logging.StreamHandler()
@@ -347,7 +349,6 @@ def initServer():
     # Import all the servers
     run = runner.ServerRunner()
     
-    serverdir = os.path.join(DATADIR, "servers")
     for i in os.listdir(serverdir):
         path = os.path.join(serverdir, i)
         if os.path.isdir(path):
